@@ -2,7 +2,7 @@
 
 Sales Forecasting - Increasing Efficiency through Machine Learning
 
-# Introduction to the fictional story
+### Introduction to the fictional story
 Imagine you run a successful retail business. You always want your shelves to be stocked with the right products—neither too much nor too little. However, reality often looks different: one day you have excess inventory that spoils and incurs costs. The next day, your shelves are empty because demand was underestimated, leaving your customers disappointed.
 
 Finding the balance is an art—but also a huge challenge. Traditional sales forecasting methods are time-consuming and often inaccurate. The consequences? High storage costs, frustrated customers, and missed revenue opportunities.
@@ -11,7 +11,7 @@ But now, imagine you had a solution. An app that works like an experienced sales
 
 This opportunity gave rise to the idea for my final project: to develop a prototype app to analyze historical sales data, visualize it, and forecast future sales. In addition to historical data, external factors such as holidays, weather, the consumer price index, oil prices, promotional activities, and regional unemployment will also be considered.
 
-# Dataset description
+### Dataset description
 For the prototype, five CSV files from the Kaggle competition "Walmart Recruiting - Store Sales Forecasting" are available.
 
 https://www.kaggle.com/competitions/walmart-recruiting-store-sales-forecasting/overview
@@ -60,7 +60,7 @@ Labor Day: September 10, 2010; September 9, 2011; September 7, 2012; September 6
 Thanksgiving: November 26, 2010; November 25, 2011; November 23, 2012; November 29, 2013
 Christmas: December 31, 2010; December 30, 2011; December 28, 2012; December 27, 2013
 
-# Approach
+### Approach
 
 Develop a function to create charts or a dashboard for the app.
 Develop a function that trains models, validates them, selects the best model, tunes hyperparameters if necessary, and generates sales forecasts.
