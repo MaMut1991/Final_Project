@@ -1,16 +1,66 @@
+# Python
 *.pyc
-*.sw*
-build/
+*.pyo
+*.pyd
+__pycache__/
+env/
+venv/
+
+# Jupyter Notebook
 .ipynb_checkpoints
-dist/
-seaborn.egg_info/
-.cache/
-.coverage
-cover/
-htmlcov/
-.idea/
-.vscode/
-.pytest_cache/
+
+# macOS
 .DS_Store
-notes/
-notebooks/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Logfiles
+*.log
+
+# Build directories
+build/
+dist/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+
+# Node.js
+node_modules/
+
+# Python Virtual Environments
+*.venv
+.env
+
+# Docker
+*.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Miscellaneous
+*.tmp
+*.swp
+*.swo
+
+# Sensitive data
+*.env
+*.secret
+
+# Exclude test coverage
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+
+# Distribution / packaging
+*.egg
+*.egg-info
+MANIFEST
+
+# Dependency directories
+pip-log.txt
+pip-delete-this-directory.txt
+
