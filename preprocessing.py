@@ -96,4 +96,6 @@ merge_test['Week'] = merge_test['Date'].dt.isocalendar().week
 merge_test['Month'] = merge_test['Date'].dt.month
 merge_test['Year'] = merge_test['Date'].dt.year
 
-print(merge_train)
+
+# Unrelevante Spalten aus merge_test entfernen
+merge_test.drop(['Date', 'Year', 'MarkDown1', 'MarkDown2', 'MarkDown4', 'MarkDown3', 'MarkDown5', 'CPI', 'Unemployment', 'Temperature', 'Fuel_Price'], axis=1)

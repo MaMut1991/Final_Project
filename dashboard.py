@@ -2,21 +2,23 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import preprocessing
+import streamlit as st
 
 
 
-def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operation=None):
+def create_diagram(y1=None, y2=None, x=None, operation=None):
     '''
     Diese Funktion soll Parameter aus der Web-App entgegennehmen und gemäß der Eingabe entsprechende Diagramme zurückgeben.
     Dafür werden 4 Cases erstellt:
 
-    Case1: Es werden die weekly_sales (pro store / pro department) über die Zeit in einem Diagramm mit einer y-Achse dargestellt. Man hat die Ausahl die Daten als Mittelwert oder Summe darzustellen und darf den betrachteten Zeitraum auswählen.
+    Case1: Es werden die Weekly_Sales auf der y-Achse und die Zeit, die Stores oder die Departments auf der x-Achse in einem Diagramm (mit nur 1 y-Achse) dargestellt. Man hat die Ausahl die Daten als Mittelwert oder Summe darzustellen und darf den betrachteten Zeitraum auswählen.
 
-    Case2: Es werden die weekly_sales (pro store / pro department) über die Zeit in einem Diagramm dargestellt, wobei eine zweite y-Achse für eine zweite Variable (frei wählbar) eingefügt wird. Man hat die Auswahl die weekly_sales als Mittelwert oder Summe darzustellen und darf den betrachteten Zeitraum auswählen.
+    Case2: Es werden die Weekly_Sales auf der y-Achse und die Zeit, die Stores oder die Departments auf der x-Achse in einem Diagramm dargestellt. Im Gegensatz zu Case 1 kann hier eine zweite y-Achse für eine zweite Variable (frei wählbar) eingefügt werden. Man hat die Auswahl die Weekly_Sales als Mittelwert oder Summe darzustellen und darf den betrachteten Zeitraum auswählen.
 
-    Case3: Es wird eine beliebige Variable, welche nicht die weekly_sales ist, in einem Diagramm mit einer y-Achse dargestellt.
+    Case3: Es wird eine beliebige Variable, welche nicht die Weekly_Sales ist, in einem Diagramm mit einer y-Achse dargestellt. Auf der x-Achse werden ebenso nicht die Weekly_Sales berücksichtigt.
 
-    Case4: Es werden 2 Variablen in einem Diagramm mit 2 y-Achsen dargestellt. Keine Variable beinhaltet die weekly_sales
+    Case4: Es werden 2 Variablen in einem Diagramm mit 2 y-Achsen dargestellt. Keine Variable beinhaltet die Weekly_Sales
 
     Parameter:
 
@@ -25,6 +27,9 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
     x: in der App ausgewählte Variable, welche auf der x-Achse dargestellt wird. Zur Auswahl stehen Store, Department und Zeit.
     operation: Daten als Mittelwert oder Summe auswerten und visualisieren
     '''
+
+    merge_train = preprocessing.merge_train
+
 
     # Case1: 1 Achse, var1 ist weekly sales
 
@@ -49,7 +54,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
             # Zeitreihenanalyse Plot 1 (nur Balkendiagramm)
 
             # Erstelle eine Figur und Achse
-            fig, ax = plt.subplots(figsize=(12,6))
+            fig, ax = plt.subplots(figsize=(15,6))
 
             # Zeichne Balkendiagramm
             sns.barplot(x='x', y='y1', data=agg_data_c1_1, palette='cool',ax=ax)
@@ -61,7 +66,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
             # Zeige das Diagramm
             plt.tight_layout()
-            plt.show()
+            st.pyplot(fig)
 
         # Case1.2: x == Date  -> Zeitreihenanalyse per Liniendiagramm
 
@@ -76,7 +81,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
                 agg_data_c1_2 = df_choice.groupby('x').sum().reset_index()
             
             # Erstelle eine Figur und Achse
-            fig, ax = plt.subplots(figsize=(12,6))
+            fig, ax = plt.subplots(figsize=(15,6))
 
             # Zeichne Liniendiagramm und setze Titel und Achsenbeschriftung
             sns.lineplot(x='x', y='y1', data=agg_data_c1_2, palette='cool', ax=ax)
@@ -93,7 +98,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
             # Zeitreihenanalyse Plot 3 (Liniendiagramm nach Monaten mit 1 Linie pro Jahr)
 
             # Erstelle eine Figur und Achse
-            fig, ax2 = plt.subplots(figsize=(12,6))
+            fig, ax2 = plt.subplots(figsize=(15,6))
 
             # Data Frame mit Jahren, Wochen, Monaten und Weekly_Sales erstellen
             df_datetime = pd.DataFrame({'Date':merge_train['Date'],
@@ -120,7 +125,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
             # Layout anpassen und Plots anzeigen
             plt.tight_layout()
-            plt.show()
+            st.pyplot(fig)
 
 
             
@@ -137,10 +142,10 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
             'y2': merge_train[y2]  # Variable für die y2-Achse
         })
 
-        if y1 == 'Weekly_Sales':   # Falls y1 gleich weekly_sales ist
+        if y1 == 'Weekly_Sales':   # Falls y1 gleich Weekly_Sales ist
             
             # Erstelle Figur und die erste Achse
-            fig, ax1 = plt.subplots(figsize=(12,6))  
+            fig, ax1 = plt.subplots(figsize=(15,6))  
 
             # Zeichne Balkendiagramm (x und y1)
             sns.barplot(x='x', y='y1', data=df_choice, palette='cool', ax=ax1)
@@ -166,15 +171,15 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
             # Layout anpassen und anzeigen
             plt.tight_layout()
-            plt.show()
+            st.pyplot(fig)
 
 
 
 
-        else:  # Falls y2 gleich weekly_sales ist
+        else:  # Falls y2 gleich Weekly_Sales ist
 
             # Erstelle Figur und die erste Achse
-            fig, ax1 = plt.subplots(figsize=(12,6))
+            fig, ax1 = plt.subplots(figsize=(15,6))
 
             # Zeichne Balkendiagramm (x und y1)
             sns.barplot(x='x', y='y1', data=df_choice, palette='cool', ax=ax1)
@@ -200,7 +205,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
             # Layout anpassen und anzeigen
             plt.tight_layout()
-            plt.show()
+            st.pyplot(fig)
 
 
        
@@ -210,50 +215,54 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
     # Case3: 1 Achse, var1 ist nicht weekly sales
 
-    elif y1 != weekly_sales and y2 == None:
+    elif y1 != 'Weekly_Sales' and y2 == None and x != 'Date':
 
-        # Case3.1: y1 == Type -> Pie-Chart
+        if y1 == 'Type':
+
+            # Case3.1: y1 == Type -> Pie-Chart
 
 
-        # Pie-Chart Store-Typen
-        labels = merge_train.Type.value_counts().index.tolist()
-        sizes = merge_train.Type.value_counts().values.tolist()
-        palette = sns.color_palette('cool', n_colors=len(labels))
-        colors = palette.as_hex()
-        explode = (0.05, 0.02, 0)
-        plt.figure(figsize=(8,8))  # Setze die Größe des Pie-Charts
-        plt.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%', startangle=60,
-        textprops={'fontsize': 18}, colors=colors)
-        plt.title('Store Arten')
+            # Pie-Chart Store-Typen
+            labels = merge_train.Type.value_counts().index.tolist()
+            sizes = merge_train.Type.value_counts().values.tolist()
+            palette = sns.color_palette('cool', n_colors=len(labels))
+            colors = palette.as_hex()
+            explode = (0.05, 0.02, 0)
+            plt.figure(figsize=(8,8))  # Setze die Größe des Pie-Charts
+            plt.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%', startangle=60,
+            textprops={'fontsize': 18}, colors=colors)
+            plt.title('Store Arten')
 
-        # Zeige das Pie-Chart an
-        plt.show()
+            # Zeige das Pie-Chart an
+            st.pyplot()
 
-        # Type A ist jetzt Type 1
-        # Type B ist jetzt Type 2
-        # Type C ist jetzt Type 3
+            # Type A ist jetzt Type 1
+            # Type B ist jetzt Type 2
+            # Type C ist jetzt Type 3
 
 
 
         # Boxplot Type vs. Size
-        fig, ax2 = plt.subplots(figsize=(12,6))
+        fig, ax2 = plt.subplots(figsize=(15,6))
         sns.set_style('whitegrid')
         sns.boxplot(x='Type', y='Size', data=merge_train, palette='cool', ax=ax2)
         plt.title('Type vs Size', fontsize=15)
-        plt.show()
+        st.pyplot(fig)
 
 
 
 
         # Case3.2: y1 == Store 
 
-        # Barchart Stores, Size, Typen
+        if (y1 == 'Store' or y1 == 'Size'):
 
-        plt.subplots(figsize=(12,6))
-        sns.barplot(x='Store', y='Size', data=merge_train, hue='Type', palette='cool', order=merge_train.sort_values('Size')['Store'].tolist())
-        plt.title('Größe der Stores', fontsize=15)
-        plt.tight_layout()
-        plt.show()
+            # Barchart Stores, Size, Typen
+
+            plt.subplots(figsize=(15,6))
+            sns.barplot(x='Store', y='Size', data=merge_train, hue='Type', palette='cool', order=merge_train.sort_values('Size')['Store'].tolist())
+            plt.title('Größe der Stores', fontsize=15)
+            plt.tight_layout()
+            st.pyplot(fig)
 
 
 
@@ -267,7 +276,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
         # Barplot zeichnen und beschriften
         plt.style.use('default')
-        plt.figure(figsize=(12,6))
+        plt.figure(figsize=(15,6))
 
         # In sns.barplot x und y explizit angeben
         sns.barplot(x='Store', y='Weekly_Sales', data=agg_data_c3_2, palette='cool')
@@ -277,7 +286,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
         plt.ylabel('Sales', fontsize=16)
         plt.xlabel('Store', fontsize=16)
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -292,13 +301,13 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
         # Barplot zeichnen und beschriften
         plt.style.use('default')
-        plt.figure(figsize=(12,6))
+        plt.figure(figsize=(15,6))
         sns.barplot(x='Dept', y='Weekly_Sales',data=agg_data_c3_3, palette='cool')
         plt.grid(True)
         plt.title('Gewünschte Auswertung', fontsize=18)
         plt.ylabel('Sales', fontsize=16)
         plt.xlabel('Departments', fontsize=16)
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -323,7 +332,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle eine Figur und Achse
-        fig, ax2 = plt.subplots(figsize=(12,6))
+        fig, ax2 = plt.subplots(figsize=(15,6))
 
         sns.lineplot(x='Month', y='Temperature', hue='Year', data=temperatur_aggregated_c3_4, palette='cool',ax=ax2)
 
@@ -336,18 +345,18 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Pointplot erstellen
-        plt.figure(figsize=(8,6))
+        plt.figure(figsize=(15,6))
         sns.pointplot(x="Date", y="Temperature", data=merge_train, color = 'salmon')
         plt.xlabel('Time Period')
         plt.ylabel('Temperature')
         plt.title('Temperature over Time')
-        plt.show()
+        st.pyplot(fig)
 
 
 
         # Layout anpassen und Plots anzeigen
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
     
 
 
@@ -372,7 +381,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle eine Figur und Achse
-        fig, ax2 = plt.subplots(figsize=(12,6))
+        fig, ax2 = plt.subplots(figsize=(15,6))
 
         sns.lineplot(x='Month', y='CPI', hue='Year', data=cpi_aggregated_c3_5, palette='cool',ax=ax2)
 
@@ -384,18 +393,18 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle Pointplot
-        plt.figure(figsize=(8,6))
+        plt.figure(figsize=(15,6))
         sns.pointplot(x="Date", y="CPI", data=cpi_aggregated_c3_5, color = 'turquoise')
         plt.xlabel('Time Period')
         plt.ylabel('Consumer Price Index')
         plt.title('Consumer Price Index over Time')
-        plt.show()
+        st.pyplot(fig)
 
 
 
         # Layout anpassen und Plots anzeigen
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -421,7 +430,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle eine Figur und Achse
-        fig, ax2 = plt.subplots(figsize=(12,6))
+        fig, ax2 = plt.subplots(figsize=(15,6))
 
         sns.lineplot(x='Month', y='Unemployment', hue='Year', data=unemployment_aggregated_c3_6, palette='cool',ax=ax2)
 
@@ -432,16 +441,16 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
         # Layout anpassen und Plots anzeigen
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
 
 
         # Erstelle Pointplot
-        plt.figure(figsize=(8,6))
+        plt.figure(figsize=(15,6))
         sns.pointplot(x="Date", y="Unemployment", data=unemployment_aggregated_c3_6, color='khaki')
         plt.xlabel('Time Period')
         plt.ylabel('Unemployment')
         plt.title('Unemployment over Time')
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -458,7 +467,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
         isholiday_aggregated_c3_7 = df_c3_7.groupby(['Year', 'Month']).agg({'IsHoliday': 'sum'}).reset_index()
 
         # Erstelle eine Figur und Achse
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(15,6))
 
         # Erstelle stem-plot
         
@@ -476,7 +485,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
         # Zeige das Diagramm
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -484,7 +493,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle eine Figur und Achse
-        fig, ax2 = plt.subplots(figsize=(12,6))
+        fig, ax2 = plt.subplots(figsize=(15,6))
 
         sns.lineplot(x='Month', y='IsHoliday', hue='Year', data=isholiday_aggregated_c3_7, palette='cool',ax=ax2)
 
@@ -495,7 +504,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
         # Layout anpassen und Plots anzeigen
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -512,11 +521,11 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
         # Barplot Size, Store, Type
 
-        plt.subplots(figsize=(12,6))
+        plt.subplots(figsize=(15,6))
         sns.barplot(x='Store',y='Size',data=merge_train,hue=merge_train['Type'], palette='cool',order=merge_train.sort_values('Size')['Store'].tolist())
         plt.title('Gewünschte Auswertung',fontsize=15)
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
         
 
 
@@ -542,7 +551,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle eine Figur und Achse
-        fig, ax = plt.subplots(figsize=(12,6))
+        fig, ax = plt.subplots(figsize=(15,6))
 
         # Zeichne Liniendiagramm und setze Titel und Achsenbeschriftung
         sns.lineplot(x='Year', y='Fuel_Price', data=fuelprice_aggregated_c3_9, palette='cool', ax=ax)
@@ -557,12 +566,12 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle pointplot
-        plt.figure(figsize=(8,6))
+        plt.figure(figsize=(15,6))
         sns.pointplot(x="Date", y="Fuel_Price", data=fuelprice_aggregated_c3_9, color = 'sandybrown')
         plt.xlabel('Time Period')
         plt.ylabel('Fuel Price')
         plt.title('Fuel Price over Time')
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -571,7 +580,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
 
         # Erstelle eine Figur und Achse
-        fig, ax2 = plt.subplots(figsize=(12,6))
+        fig, ax2 = plt.subplots(figsize=(15,6))
 
         sns.lineplot(x='Month', y='Fuel_Price', hue='Year', data=fuelprice_aggregated_c3_9, palette='cool',ax=ax2)
 
@@ -582,7 +591,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
 
         # Layout anpassen und Plots anzeigen
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -600,7 +609,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
                                 'MarkDown5':merge_train['MarkDown5']})
 
         # Erstelle eine Figur und Achsen für Subplots
-        fig, axes = plt.subplots(5, 1, figsize=(20, 15))  # 5 Zeilen, 1 Spalte
+        fig, axes = plt.subplots(5, 1, figsize=(15,6))  # 5 Zeilen, 1 Spalte
 
         # Liste der MarkDown-Spalten
         markdown_columns = ['MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5']
@@ -615,7 +624,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
         plt.tight_layout()
 
         # Zeige die Plots an
-        plt.show()
+        st.pyplot(fig)
 
 
 
@@ -651,7 +660,7 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
             agg_c4['Date'] = pd.to_datetime(agg_c4[['Year', 'Month']].assign(DAY=1))
 
             # Erstelle eine Figur und Achsen
-            fig, ax1 = plt.subplots(figsize=(12,6))
+            fig, ax1 = plt.subplots(figsize=(15,6))
 
             # Zeichne y1 als Linie auf ax1
             sns.lineplot(x='Date', y=y1, data=agg_c4, color='blue', ax=ax1, label=y1)
@@ -673,13 +682,13 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
             # Layout anpassen und Plots anzeigen
             plt.tight_layout()
             plt.legend()
-            plt.show()
+            st.pyplot(fig)
 
 
             # Zeichne Liniendiagramm nach Monaten
 
             # Erstelle eine Figur und Achsen
-            fig, ax1 = plt.subplots(figsize=(12,6))
+            fig, ax1 = plt.subplots(figsize=(15,6))
 
             # Zeichne y1 als Linie auf ax1
             sns.lineplot(x='Month', y=y1, data=agg_c4, palette='cool', ax=ax1,hue='Year')
@@ -701,14 +710,14 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
             # Layout anpassen und Plots anzeigen
             plt.tight_layout()
             #plt.legend()
-            plt.show()
+            st.pyplot(fig)
 
 
 
             # Zeichne Liniendiagramm nach Monaten
 
             # Erstelle eine Figur und Achsen
-            fig, ax1 = plt.subplots(figsize=(12,6))
+            fig, ax1 = plt.subplots(figsize=(15,6))
 
             # Zeichne y1 als Linie auf ax1
             sns.lineplot(x='Month', y=y1, data=agg_c4, color='blue', ax=ax1, label=y1, hue='Years')
@@ -730,4 +739,4 @@ def create_diagram(y1=None, y2=None, x=None, store=None, department=None, operat
             # Layout anpassen und Plots anzeigen
             plt.tight_layout()
             plt.legend()
-            plt.show()
+            st.pyplot(fig)
