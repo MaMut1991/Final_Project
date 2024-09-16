@@ -66,7 +66,7 @@ Christmas: December 31, 2010; December 30, 2011; December 28, 2012; December 27,
 - Develop a function that trains models, validates them, selects the best model, tunes hyperparameters if necessary, and generates sales forecasts.
 - Develop a Streamlit app to visualize the charts and forecasts. Parameters can be adjusted and passed to the two functions above to customize the analysis results.
 - 
-Three Python files will be created: main.py, data.py, and model.py.
+Three Python files will be created: main.py, dashboard.py, and model.py.
 - main.py: This file creates the Streamlit app and controls the function calls of the other files.
 - data.py: This file analyzes the sales data and visualizes it in the form of charts.
 - model.py: In this file, models will be trained, validated, the best model selected, hyperparameters tuned, and sales forecasts generated.
