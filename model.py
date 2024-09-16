@@ -62,7 +62,7 @@ def visualizing_forecasts(past_dates, future_dates, y_test_future):
     return mse_train, rmse_train, mae_train, r2_train, mse_test, rmse_test, mae_test, r2_test
 
 
-def best_model_with_sales_forecast():
+def sales_forecast():
     # Datenaufteilung
     past_dates = merge_train['Date']  
     future_dates = merge_test['Date']  
