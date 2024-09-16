@@ -1,19 +1,53 @@
-# Import Bibliotheken
+# Start with: streamlit run main.py
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
+import streamlit as st
 
-from sklearn.model_selection import GridSearchCV, cross_val_score, train_test_split, KFold
-from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import SelectKBest, f_regression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import Lasso
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-from xgboost import XGBRegressor
-import joblib
+from dashboard import create_diagram
+from model import visualizing_forecasts, evaluate_model, sales_forecast
+
+st.set_page_config(layout='wide')
+
+# Titel
+st.header('[Sales App] (Prototyp)')
+col1 = st.columns(1)
+
+
+
+# st.session_state oder st.cache?
+
+
+
+# Sidebar
+
+# Analyse
+options_x = ['CPI', 'Date', 'Dept', 'Fuel_Price', 'IsHoliday', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5', 'Size', 'Store', 'Temperature', 'Type', 'Unemployment', 'Weekly_Sales']
+
+options_y1 = option_x = ['CPI', 'Date', 'Dept', 'Fuel_Price', 'IsHoliday', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5', 'Size', 'Store', 'Temperature', 'Type', 'Unemployment', 'Weekly_Sales']
+
+st.sidebar.markdown('## Analyse:' )
+st.selectbox('Was soll auf die x-Achse?',options = options_x, placeholder='x-Achse')
+st.selectbox('Was soll auf die y-Achse?', options=options_y1, placeholder='y-Achse')
+
+
+
+
+# Prognose
+st.sidebar.markdown('## Prognose:')
+
+
+
+
+# Display: Spalte um Diagramme zu visualisieren
+
+with col1:
+
+    st.subheader('Ihre gewünschten Analyseergebnisse:')
+
+
+
+
+
+
 
 
 
