@@ -24,9 +24,9 @@ col1 = st.columns(1)
 st.sidebar.markdown('## Analyse:', help='In diesem Abschnitt können historische Daten durch Visualisierungen analysiert werden.' )
 
 # Listen für Dropdown-Menü in Sidebar für Parameterauswahl
-options_x = ['Date', 'Dept', 'Store']
+options_x = [None, 'Date', 'Dept', 'Store']
 
-options_y1 = option_x = ['CPI', 'Date', 'Dept', 'Fuel_Price', 'IsHoliday', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5', 'Size', 'Store', 'Temperature', 'Type', 'Unemployment', 'Weekly_Sales']
+options_y1 = option_x = [None, 'CPI', 'Date', 'Dept', 'Fuel_Price', 'IsHoliday', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5', 'Size', 'Store', 'Temperature', 'Type', 'Unemployment', 'Weekly_Sales']
 
 options_y2 = option_x = [None,'CPI', 'Date', 'Dept', 'Fuel_Price', 'IsHoliday', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5', 'Size', 'Store', 'Temperature', 'Type', 'Unemployment', 'Weekly_Sales']
 
