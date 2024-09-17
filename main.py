@@ -4,8 +4,10 @@ import streamlit as st
 
 from dashboard import create_diagram
 from model import visualizing_forecasts, evaluate_model, sales_forecast
+from preprocessing import data_preprocessing
 
 st.set_page_config(layout='wide')
+data_preprocessing()
 
 # Titel
 st.header('SalesEcho © (Prototyp)')
