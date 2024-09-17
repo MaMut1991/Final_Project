@@ -16,10 +16,6 @@ from xgboost import XGBRegressor
 import joblib
 
 
-# Unrelevante Spalten entfernen
-merge_test.drop(['Date', 'Year', 'MarkDown1', 'MarkDown2', 'MarkDown4', 'MarkDown3', 'MarkDown5', 'CPI', 'Unemployment', 'Temperature', 'Fuel_Price'], axis=1)
-
-
 def visualizing_forecasts(past_dates, future_dates, y_test_future):
     # Historische und prognostizierte Sales-Daten erstellen
     y_test_future_with_dates = y_test_future.copy()
@@ -43,7 +39,7 @@ def visualizing_forecasts(past_dates, future_dates, y_test_future):
     plt.show()
 
 
-    def evaluate_model(model, X_train, y_train, X_test, y_test):
+def evaluate_model(model, X_train, y_train, X_test, y_test):
     # Vorhersagen auf Trainings- und Testdaten
     y_train_pred = model.predict(X_train)
     y_test_pred = model.predict(X_test)  # Korrektur: y_test_eval_pred -> y_test_pred
