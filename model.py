@@ -15,8 +15,10 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from xgboost import XGBRegressor
 import joblib
 
+from preprocessing import data_preprocessing
 
-def visualizing_forecasts(past_dates, future_dates, y_test_future):
+
+def visualizing_forecasts(past_dates, future_dates, y_test_future, merge_train):
     # Historische und prognostizierte Sales-Daten erstellen
     y_test_future_with_dates = y_test_future.copy()
     y_test_future_with_dates['Date'] = future_dates
@@ -59,6 +61,7 @@ def evaluate_model(model, X_train, y_train, X_test, y_test):
 
 
 def sales_forecast():
+    merge_train, merge_test = data_preprocessing()
     # Datenaufteilung
     past_dates = merge_train['Date']  
     future_dates = merge_test['Date']  
@@ -97,4 +100,4 @@ def sales_forecast():
     predictions = model.predict(X_test_future)
     y_test_future = pd.DataFrame({'Weekly_Sales': predictions})
 
-    return past_dates, future_dates, y_test_future
+    return past_dates, future_dates, y_test_future, merge_train
