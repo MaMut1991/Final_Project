@@ -6,6 +6,7 @@ from dashboard import create_diagram, show_corr
 from model import visualizing_forecasts, evaluate_model, sales_forecast
 from preprocessing import data_preprocessing
 from time_series_analysis import get_time_series
+from model import sales_forecast
 
 st.set_page_config(layout='wide')
 #data_preprocessing()
@@ -63,17 +64,27 @@ if corr:
     show_corr()
 
 
-# Buttons für Time Series Analysis
+#Buttons für Time Series Analysis
 tsa = st.sidebar.button('Zeitreihenanalyse...', help='Erzeugt Diagramme, welche zeitabhängige Features analysieren')
 
 if tsa:
     get_time_series()
 
-    
+
+st.sidebar.markdown('---') # Räumliche Trennung zwischen Analyse- und Prognoseteil
 
 
 # Prognose
-st.sidebar.markdown('## Prognose:', help='In diesem Abschnitt können künftige wöchentliche Umsatzzahlen mithilfe von Machine Learning geschätzt und visualisiert werden.')
+
+
+st.sidebar.markdown('## Prognose:', help='In diesem Abschnitt werden Weekly Sales mithilfe von Machine Learning vorausgesagt.' )
+
+pred = st.sidebar.button('Prognose Weekly Sales:', help='In diesem Abschnitt können künftige wöchentliche Umsatzzahlen mithilfe von Machine Learning geschätzt und visualisiert werden.')
+
+if pred:
+    sales_forecast()
+    
+
 
 
 
