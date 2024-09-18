@@ -129,48 +129,87 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
     # Case2: 2 Achsen, var1 oder var2 sind weekly sales
 
-    elif (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and y2 is not None:
+    if (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and y2 is not None:
         
         
         # Temporärer DataFrame für die getätigte Auswahl in der App
         df_choice = pd.DataFrame({
             'x': merge_train[x],   # Variable für die x-Achse
+            'Year':merge_train['Date'].dt.year,
+            'Month': merge_train['Date'].dt.month,
+            'Week': merge_train['Date'].dt.isocalendar().week,
             'y1': merge_train[y1], # Variable für die y1-Achse
-            'y2': merge_train[y2]  # Variable für die y2-Achse
+            'y2': merge_train[y2],  # Variable für die y2-Achse
+            'Type':merge_train['Type']
         })
+
+        # Wähle die Aggregationsfunktion
+        if operation == 'Mittelwert' and x == 'Date':
+            df_choice_aggregated_c2_1 = df_choice.groupby(['Year', 'Month']).agg({'y1': 'mean', 'y2':'mean'}).reset_index()
+            df_choice_aggregated_c2_1_date = df_choice.groupby('x').agg({'y1':'mean', 'y2':'mean'}).reset_index()
+        elif operation == 'Summe' and x == 'Date':
+            df_choice_aggregated_c2_1 = df_choice.groupby(['Year', 'Month']).agg({'y1': 'sum', 'y2':'sum'}).reset_index()
+            df_choice_aggregated_c2_1_date = df_choice.groupby('x').agg({'y1':'sum', 'y2':'sum'}).reset_index()
+
 
         if y1 == 'Weekly_Sales' and x == 'Date' and y2 not in ['Type', 'Size', 'Dept']:   # Falls y1 gleich Weekly_Sales ist
             st.write('Case2.1')
             
+            # Plot 1: Lineplot auf Jahresbasis
+
             # Erstelle Figur und die erste Achse
             fig, ax1 = plt.subplots(figsize=(15,6))  
 
-            # Zeichne Balkendiagramm (x und y1)
-            sns.barplot(x='x', y='y1', data=df_choice, palette=color_palette_1, ax=ax1)
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=20)
-            ax1.set_ylabel(y1, fontsize = 15)
-            ax1.set_xlabel(x, fontsize = 15)
+            sns.lineplot(x='x', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
+            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_ylabel(y1, fontsize=fontsize_axes)
+            ax1.set_xlabel('Year', fontsize=fontsize_axes)  # 'Date' als Label
+            ax1.legend(loc='upper left')
+            ax1.grid(True, linestyle='-')
            
-
+            
             # Erstelle zweite y-Achse
             ax2 = ax1.twinx()
 
-            # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
-                agg_data = df_choice.groupby('x').mean().reset_index()
-            else:
-                agg_data = df_choice.groupby('x').sum().reset_index()
-                
-
-            # Visualisiere die aggregierten Verkaufsdaten in Liniendiagramm
-            ax2.plot(ax1.get_xticks(),agg_data['y2'], color='red', marker='o')
-            ax2.set_ylabel(y2, fontsize=15)
-          
-
+                      
+            # Zeichne y2 als Linie auf ax2
+            sns.lineplot(x='x', y='y2', data=df_choice_aggregated_c2_1_date, color=color_palette_2[1], ax=ax2, label=y2)
+            ax2.set_ylabel(y2, fontsize=fontsize_axes)
+            ax2.legend(loc='upper right')
+            
+            
             # Layout anpassen und anzeigen
             plt.tight_layout()
             st.pyplot(fig)
 
+
+
+            # Plot 2: Lineplot auf Monatsbasis
+
+            # Erstelle Figur und die erste Achse
+            fig, ax1 = plt.subplots(figsize=(15,6))  
+
+            sns.lineplot(x='Month', y='y1', data=df_choice_aggregated_c2_1, palette=color_palette_3, ax=ax1, hue='Year')
+            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_ylabel(y1, fontsize=fontsize_axes)
+            ax1.set_xlabel('Month', fontsize=fontsize_axes)  # 'Month' als Label
+            ax1.legend(loc='upper left')
+            ax1.grid(True, linestyle='-')
+           
+            
+            # Erstelle zweite y-Achse
+            ax2 = ax1.twinx()
+
+                      
+            # Zeichne y2 als Linie auf ax2
+            sns.lineplot(x='Month', y='y2', data=df_choice_aggregated_c2_1, palette='Wistia', ax=ax2, hue='Year')
+            ax2.set_ylabel(y2, fontsize=fontsize_axes)
+            ax2.legend(loc='upper right')
+            
+            
+            # Layout anpassen und anzeigen
+            plt.tight_layout()
+            st.pyplot(fig)
 
 
 
@@ -178,33 +217,31 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.write('Case2.2')
 
             # Erstelle Figur und die erste Achse
-            fig, ax1 = plt.subplots(figsize=(15,6))
+            fig, ax1 = plt.subplots(figsize=(15,6))  
 
-            # Zeichne Balkendiagramm (x und y1)
-            sns.barplot(x='x', y='y1', data=df_choice, palette=color_palette_1, ax=ax1)
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=20)
-            ax1.set_ylabel(y1, fontsize=15)
-            ax1.set_xlabel(x, fontsize=15)
-          
-
+            sns.lineplot(x='x', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
+            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_ylabel(y1, fontsize=fontsize_axes)
+            ax1.set_xlabel('Date', fontsize=fontsize_axes)  # 'Date' als Label
+            ax1.legend(loc='upper left')
+            ax1.grid(True, linestyle='-')
+            
+            
             # Erstelle zweite y-Achse
             ax2 = ax1.twinx()
 
-            # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
-                agg_data = df_choice.groupby('x').mean().reset_index()
-            else:
-                agg_data = df_choice.groupby('x').sum().reset_index()
-
-            # Visualisiere die aggregierten Verkaufsdaten in Liniendiagramm
-            ax2.plot(ax1.get_xticks(),agg_data['y2'], color='red', marker='o')
-            ax2.set_ylabel(y2)
-            #ax2.set_xticks(range(len(df_choice['x'])))
+                        
+            # Zeichne y2 als Linie auf ax2
+            sns.lineplot(x='x', y='y2', data=df_choice_aggregated_c2_1_date, color=color_palette_2[1], ax=ax2, label=y2)
+            ax2.set_ylabel(y2, fontsize=fontsize_axes)
+            ax2.legend(loc='upper right')
             
-
+            
             # Layout anpassen und anzeigen
             plt.tight_layout()
             st.pyplot(fig)
+
+
 
         elif (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and x != 'Date' and not (y1 == 'Size' or y2 == 'Size'):
             st.write('Case2.3')
@@ -215,15 +252,20 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         elif (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and x != 'Date' and (y1 == 'Size' or y2 == 'Size'):
             st.write('Case2.4')
 
+            # Plot 1
+
             # Erstelle Figur und die erste Achse
-            fig, ax1 = plt.subplots(figsize=(15,6))
+            fig1, ax1 = plt.subplots(figsize=(15,6))
 
             # Zeichne Balkendiagramm (x und y1)
-            sns.barplot(x='x', y='y1', data=df_choice, palette=color_palette_1, ax=ax1)
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=15)
-            ax1.set_ylabel(y1)
-            ax1.set_xlabel(x)
-          
+
+            
+            sns.barplot(x='x', y='y1', data=df_choice, color=color_palette_2[0], ax=ax1)
+            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_ylabel(y1, fontsize=fontsize_axes)
+            ax1.set_xlabel(x, fontsize=fontsize_axes)
+            ax1.grid(True,linestyle='-', alpha=0.7)
+            
 
             # Erstelle zweite y-Achse
             ax2 = ax1.twinx()
@@ -234,15 +276,49 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             else:
                 agg_data = df_choice.groupby('x').sum().reset_index()
 
-            # Visualisiere die aggregierten Verkaufsdaten in Liniendiagramm
-            ax2.plot(ax1.get_xticks(),agg_data['y2'], color='red', marker='o')
-            ax2.set_ylabel(y2)
-            #ax2.set_xticks(range(len(df_choice['x'])))
+            # Zeichne y2 als Linie auf ax2
+            ax2.plot(ax1.get_xticks(), agg_data['y2'], color=color_palette_4[-1],label=y2)
+            ax2.set_ylabel(y2, fontsize=fontsize_axes)
+            ax2.legend(loc='upper right')
             
 
             # Layout anpassen und anzeigen
             plt.tight_layout()
-            st.pyplot(fig)
+            st.pyplot(fig1)
+
+
+            # Plot 2
+
+            # Erstelle Figur und die erste Achse
+            fig2, ax1 = plt.subplots(figsize=(15,6))
+
+            # Zeichne Balkendiagramm (x und y1)
+
+            sns.barplot(x='x', y='y1', data=df_choice, palette=color_palette_3, ax=ax1, hue='Type')
+            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_ylabel(y1,fontsize=fontsize_axes)
+            ax1.set_xlabel(x, fontsize=fontsize_axes)
+            ax1.grid(True,linestyle='-', alpha=0.7)
+            
+
+            # Erstelle zweite y-Achse
+            ax2 = ax1.twinx()
+
+            # Wähle die Aggregationsfunktion
+            if operation == 'Mittelwert':
+                agg_data = df_choice.groupby('x').mean().reset_index()
+            else:
+                agg_data = df_choice.groupby('x').sum().reset_index()
+
+            # Zeichne y2 als Linie auf ax2
+            ax2.plot(ax1.get_xticks(), agg_data['y2'], color=color_palette_4[-1],label=y2)
+            ax2.set_ylabel(y2, fontsize=fontsize_axes)
+            ax2.legend(loc='upper right')
+            
+
+            # Layout anpassen und anzeigen
+            plt.tight_layout()
+            st.pyplot(fig2)
 
 
 
