@@ -1218,3 +1218,28 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
     elif y1 != 'Weekly_Sales' and y2 != 'Weekly_Sales' and x != 'Date' and y2 is not None:   
         st.write('Case4.3')
         st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
+
+
+def show_corr():
+    merge_train, merge_test = data_preprocessing()
+    color_palette_1 = ['#763DFF']    # 1 Farbe für Diagramm
+    color_palette_2 = ['#763DFF', '#FF3D65']    # 2 Farben für Diagramm
+    color_palette_3 = ['#763DFF', '#FF3D65', '#C6FF3D']    # 3 Farben für Diagramm
+    color_palette_4 = ['#763DFF', '#FF3D65', '#C6FF3D', '#3DFFD7']    # 4 Farben für Diagramm
+    color_palette_5 = []    # 5 Farben für Diagramm
+    color_palette_6 = []    # 6 Farben für Diagramm
+
+    fontsize_title = 20
+    fontsize_axes =15
+    
+
+    # Erstelle Barplot
+    fig1, ax1 = plt.subplots(figsize=(15,6))
+    merge_train.corr()['Weekly_Sales'].abs().sort_values()[:-1].plot(kind='bar', ax=ax1, color=color_palette_1)
+    ax1.set_title('Feature Korrelationen:', fontsize=fontsize_title)
+    
+    # Zeige das Diagramm in Streamlit an
+    st.pyplot(fig1)
+
+
+
