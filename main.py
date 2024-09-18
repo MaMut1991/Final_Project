@@ -2,7 +2,7 @@
 
 import streamlit as st
 
-from dashboard import create_diagram, show_corr
+from dashboard import create_diagram, show_corr, get_dashboard
 from model import visualizing_forecasts, evaluate_model, sales_forecast
 from preprocessing import data_preprocessing
 from time_series_analysis import get_time_series
@@ -25,7 +25,37 @@ col1 = st.columns(1)
 
 # Analyse
 
-st.sidebar.markdown('## Analyse:', help='In diesem Abschnitt können historische Daten durch Visualisierungen analysiert werden.' )
+st.sidebar.markdown('# Analysen:', help='In diesem Abschnitt können historische Daten durch Visualisierungen analysiert werden.' )
+
+st.sidebar.markdown('#### Vorgefertigte Analysen:')
+
+# Buttons für Korrelationen
+corr = st.sidebar.button('Einflüsse auf Weekly Sales', help='Erzeugt Diagramme, welche die Korrelationen zwischen den Features aufzeigen.')
+
+if corr:
+    show_corr()
+
+
+#Buttons für Time Series Analysis
+tsa = st.sidebar.button('Zeitreihenanalyse', help='Erzeugt Diagramme, welche zeitabhängige Features analysieren')
+if tsa:
+    get_time_series()
+
+
+# Button für Dashboard
+db = st.sidebar.button('Sales Dashboard', help='Visualisiert ein Sales Dashboard, um wichtige Einblicke in den Datensatz zu bekommen')
+
+if db:
+    get_dashboard()
+
+
+
+st.sidebar.markdown('---') # Räumliche Trennung 
+
+
+
+
+st.sidebar.markdown('#### Erstellung eigener Diagramme:')
 
 # Listen für Dropdown-Menü in Sidebar für Parameterauswahl
 options_x = [None, 'Date', 'Dept', 'Store']
@@ -50,39 +80,32 @@ option_operation = ['Mittelwert', 'Summe']
 operation = st.sidebar.selectbox('Darstellung als Summe oder Mittelwert?:',options=option_operation, placeholder='Rechenoperation', help='Entscheiden Sie, ob die Diagramme den Mittelwert oder die Summe der gewünschten Daten anzeigen sollen.')
 
 # Buttons für Analyseteil
-show_me = st.sidebar.button('Show Me Diagrams', help='Erzeugt Diagramme auf Basis der ausgewählten Parameter.')
+show_me = st.sidebar.button('Erstelle Diagramme', help='Erzeugt Diagramme auf Basis der ausgewählten Parameter.')
 
 # Erzeuge Diagramme -> Ausführen create_diagram
 if show_me:
     create_diagram(y1 = y1_achse, y2=y2_achse, x=x_achse, operation=operation)
 
 
-# Buttons für Korrelationen
-corr = st.sidebar.button('Korrelationen...', help='Erzeugt Diagramme, welche die Korrelationen zwischen den Features aufzeigen.')
-
-if corr:
-    show_corr()
 
 
-#Buttons für Time Series Analysis
-tsa = st.sidebar.button('Zeitreihenanalyse...', help='Erzeugt Diagramme, welche zeitabhängige Features analysieren')
-
-if tsa:
-    get_time_series()
+st.sidebar.markdown('---') # Räumliche Trennung 
 
 
-st.sidebar.markdown('---') # Räumliche Trennung zwischen Analyse- und Prognoseteil
 
 
 # Prognose
 
 
-st.sidebar.markdown('## Prognose:', help='In diesem Abschnitt werden Weekly Sales mithilfe von Machine Learning vorausgesagt.' )
+st.sidebar.markdown('# Prognose:', help='In diesem Abschnitt werden Weekly Sales mithilfe von Machine Learning vorausgesagt.' )
 
-pred = st.sidebar.button('Prognose Weekly Sales:', help='In diesem Abschnitt können künftige wöchentliche Umsatzzahlen mithilfe von Machine Learning geschätzt und visualisiert werden.')
+pred = st.sidebar.button('Starte Sales Forecast', help='In diesem Abschnitt können künftige wöchentliche Umsatzzahlen mithilfe von Machine Learning geschätzt und visualisiert werden.')
 
 if pred:
-    sales_forecast()
+    past_dates, future_dates, y_test_future, merge_train = sales_forecast()
+
+    # Vorhersagen visualisieren
+    visualizing_forecasts(past_dates, future_dates, y_test_future, merge_train)
     
 
 
