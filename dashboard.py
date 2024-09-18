@@ -5,6 +5,7 @@ import seaborn as sns
 from preprocessing import data_preprocessing
 import streamlit as st
 import matplotlib.ticker as mticker
+import streamlit.components.v1 as components
 
 
 
@@ -1220,6 +1221,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
 
 
+
+# Korrelationsanalyse
 def show_corr():
     merge_train, merge_test = data_preprocessing()
     color_palette_1 = ['#763DFF']    # 1 Farbe für Diagramm
@@ -1232,7 +1235,6 @@ def show_corr():
     fontsize_title = 20
     fontsize_axes =15
     
-
     # Erstelle Barplot
     fig1, ax1 = plt.subplots(figsize=(15,6))
     merge_train.corr()['Weekly_Sales'].abs().sort_values()[:-1].plot(kind='bar', ax=ax1, color=color_palette_1)
@@ -1241,5 +1243,16 @@ def show_corr():
     # Zeige das Diagramm in Streamlit an
     st.pyplot(fig1)
 
+
+
+
+# Dashboard
+def get_dashboard():
+   
+    st.write("Klicke [hier](https://public.tableau.com/views/DashboardFlughafen-Projekt_neu/Dashboard1?:language=de-DE&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link), um das Dashboard zu öffnen.")
+
+
+    
+    
 
 
