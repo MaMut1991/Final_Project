@@ -2,12 +2,13 @@
 
 import streamlit as st
 
-from dashboard import create_diagram
+from dashboard import create_diagram, show_corr
 from model import visualizing_forecasts, evaluate_model, sales_forecast
 from preprocessing import data_preprocessing
+from time_series_analysis import get_time_series
 
 st.set_page_config(layout='wide')
-data_preprocessing()
+#data_preprocessing()
 
 # Titel
 st.header('SalesEcho © (Prototyp)')
@@ -48,12 +49,27 @@ option_operation = ['Mittelwert', 'Summe']
 operation = st.sidebar.selectbox('Darstellung als Summe oder Mittelwert?:',options=option_operation, placeholder='Rechenoperation', help='Entscheiden Sie, ob die Diagramme den Mittelwert oder die Summe der gewünschten Daten anzeigen sollen.')
 
 # Buttons für Analyseteil
-show_me = st.sidebar.button('Show Me..', help='Erzeugt Diagramme auf Basis der ausgewählten Parameter.')
+show_me = st.sidebar.button('Show Me Diagrams', help='Erzeugt Diagramme auf Basis der ausgewählten Parameter.')
 
 # Erzeuge Diagramme -> Ausführen create_diagram
 if show_me:
     create_diagram(y1 = y1_achse, y2=y2_achse, x=x_achse, operation=operation)
 
+
+# Buttons für Korrelationen
+corr = st.sidebar.button('Korrelationen...', help='Erzeugt Diagramme, welche die Korrelationen zwischen den Features aufzeigen.')
+
+if corr:
+    show_corr()
+
+
+# Buttons für Time Series Analysis
+tsa = st.sidebar.button('Zeitreihenanalyse...', help='Erzeugt Diagramme, welche zeitabhängige Features analysieren')
+
+if tsa:
+    get_time_series()
+
+    
 
 
 # Prognose
