@@ -30,13 +30,16 @@ def get_time_series():
     # Daten beschaffen aus preprocessing.py
     merge_train, merge_test = data_preprocessing()
 
+    st.markdown(' ')
+    st.markdown('##### Zeitabhängige Features plotten')
+
     # 2. EDA - Zeitabhängige Features plotten
     fig, ax = plt.subplots(figsize=(15, 8))
     merge_train[['Date', 'Temperature', 'Fuel_Price', 'CPI', 'Unemployment']].plot(x='Date', subplots=True, ax=ax, color=color_palette_4, title = 'Zeitabhägige Features')
-    ax.set_title('Zeitabhägige Features', fontsize=fontsize_title)
+    #ax.set_title('Zeitabhägige Features', fontsize=fontsize_title)
     st.pyplot(fig)
 
-
+    st.markdown('##### Zeitreihenzerlegung für Weekly Sales')
 
     # Zeitreihenzerlegung für alle Stores
 
