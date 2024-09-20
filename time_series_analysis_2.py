@@ -130,31 +130,4 @@ def get_time_series():
     merge_train['log_sales'] = np.log(merge_train['Weekly_Sales'])
 
 
-    # 5. Modellierung
-    # Wähle ein Modell: Überlege, welche Modelle für deine Daten geeignet sind:
-    # ARIMA: Für univariate Zeitreihen mit saisonalen Komponenten.
-    # SARIMA: Wenn saisonale Effekte vorhanden sind.
-    # Exogene Variablen: Wenn du nicht zeitabhängige Variablen einbeziehen möchtest, verwende SARIMAX oder ähnliche Modelle.
-    # Machine Learning: Modelle wie Random Forest, Gradient Boosting oder neuronale Netze können ebenfalls verwendet werden.
-
-
-    # 6. Modellbewertung
-    # Trainings- und Testdaten: Teile die Daten in Trainings- und Testsets auf.
-    # Metriken: Verwende Metriken wie RMSE, MAE oder MAPE zur Bewertung der Vorhersagegenauigkeit.
-
-
-
-    #7. Vorhersage
-    #Zukunftsprognose: Verwende das ausgewählte Modell, um Vorhersagen für die nächsten Tage zu erstellen.
-    #Visualisierung der Vorhersagen: Vergleiche die Vorhersagen mit den tatsächlichen Werten, um die Modellleistung zu bewerten.
-
-
-
-    #8. Dokumentation und Reporting
-    #Bericht: Dokumentiere alle Schritte und Ergebnisse, um eine klare Vorstellung von der Analyse und den Vorhersagen zu vermitteln.
-    #Diagramme, die nützlich sein könnten:
-    #Zeitreihendiagramm der Weekly_Sales
-    #Histogramm der nicht zeitabhängigen Variablen
-    #Autokorrelations- und Partielle Autokorrelationsdiagramme
-    #Residuenanalyse (z.B. Scatterplots der Residuen)
-    #Vorhersageplots
+    
