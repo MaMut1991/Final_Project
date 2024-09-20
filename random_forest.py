@@ -143,7 +143,7 @@ def sales_forecast():
     merge_train, merge_test = data_preprocessing()
 
     # Splitte Trainingsdaten (train.csv) in train und test 
-    X = merge_train.drop(['Date','Year', 'Month','Week', 'Weekly_Sales', 'Fuel_Price', 'IsHoliday'], axis=1) # Alle Originalfeatures (ohne Weekly_Sales = Target und ohne Zeitkomponenten) 
+    X = merge_train.drop(['Date','Year', 'Month', 'Weekly_Sales', 'Fuel_Price','Temperature','Type','MarkDown1','MarkDown2','MarkDown3','MarkDown4','MarkDown4','MarkDown5','CPI','IsHoliday', 'Unemployment'], axis=1) # Alle Originalfeatures (ohne Weekly_Sales = Target und ohne Zeitkomponenten) 
     y = merge_train['Weekly_Sales']     # Nur Weekly_Sales (Target) 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)     
 
@@ -163,7 +163,7 @@ def sales_forecast():
     # Prognosen für Zukunft erstellen (basierend auf train.csv)
 
     # Einführung zusätzlicher Testdatensatz aus merge_test für Schätzung und Visualisierung der Prognosen
-    X_test_future = merge_test.drop(['Date','Year', 'Month', 'Week', 'Fuel_Price', 'IsHoliday'], axis=1)     # Features aus Testdatensatz (test.csv)
+    X_test_future = merge_test.drop(['Date','Year', 'Month', 'Fuel_Price','Temperature','Type','MarkDown1','MarkDown2','MarkDown3','MarkDown4','MarkDown4','MarkDown5','CPI','IsHoliday', 'Unemployment'], axis=1)     # Features aus Testdatensatz (test.csv)
 
     predictions = model.predict(X_test_future)
     y_test_future = pd.DataFrame({'Weekly_Sales': predictions})
