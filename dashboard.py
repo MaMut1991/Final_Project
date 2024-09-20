@@ -2,10 +2,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from preprocessing import data_preprocessing
+
 import streamlit as st
 import matplotlib.ticker as mticker
 import streamlit.components.v1 as components
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+from preprocessing import data_preprocessing
 
 
 
@@ -1277,6 +1280,44 @@ def get_type_department_sales_heatmap():
     plt.xlabel('Type', fontsize=50)
     plt.ylabel('Department', fontsize=50)
     st.pyplot(fig2)
+
+# Feiertagsanalyse
+def get_holiday():
+    color_palette_1 = ['#763DFF']    # 1 Farbe für Diagramm
+    color_palette_2 = ['#763DFF', '#FF3D65']    # 2 Farben für Diagramm
+    color_palette_3 = ['#763DFF', '#FF3D65', '#C6FF3D']    # 3 Farben für Diagramm
+    color_palette_4 = ['#763DFF', '#FF3D65', '#C6FF3D', '#3DFFD7']    # 4 Farben für Diagramm
+    color_palette_5 = []    # 5 Farben für Diagramm
+    color_palette_6 = []    # 6 Farben für Diagramm
+
+    
+
+    # Funktion aus preprocessing.py importieren
+    merge_train, merge_test = data_preprocessing()
+
+    # Gruppiere nach Feiertagen/Nicht-Feiertagen
+    holiday_sales = merge_train.groupby('IsHoliday')['Weekly_Sales'].mean()
+    holiday_counts = merge_train['IsHoliday'].value_counts()
+
+    # Erstelle Subplots
+    fig = make_subplots(rows=1, cols=2, subplot_titles=("Holidays/Nonholidays Sales AVG", "Holidays/Nonholidays Counts"))
+
+    # Farben definieren
+    color_palette_2 = ['#763DFF', '#FF3D65']
+
+    # Hinzufügen der Balkendiagramme mit Farben
+    fig.add_trace(go.Bar(x=holiday_sales.values, y=holiday_sales.index, 
+                        orientation='h', marker_color=color_palette_2), 1, 1)
+
+    fig.add_trace(go.Bar(x=holiday_counts.values, y=holiday_counts.index, 
+                        orientation='h', marker_color=color_palette_2), 1, 2)
+
+    # Layout anpassen
+    fig.update_layout(showlegend=False)
+
+    # Zeige die Diagramme
+    fig.show()
+
 
 
 

@@ -2,7 +2,7 @@
 
 import streamlit as st
 
-from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap
+from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap, get_holiday
 from random_forest import visualizing_forecasts, sales_forecast
 from time_series_analysis_2 import get_time_series
 from random_forest import sales_forecast
@@ -30,11 +30,15 @@ st.sidebar.markdown('# Analysen:', help='In diesem Abschnitt können historische
 st.sidebar.markdown('#### Vorgefertigte Analysen:')
 
 # Buttons für Korrelationen
-corr = st.sidebar.button('Einflüsse auf Weekly Sales', help='Erzeugt Diagramme, welche die Korrelationen zwischen den Features aufzeigen.')
+corr = st.sidebar.button('Korrelationsanalyse', help='Erzeugt Diagramme, welche die Korrelationen zwischen den Features aufzeigen.')
 
 if corr:
     show_corr()
 
+# Feiertagsanalyse
+holiday = st.sidebar.button('Feiertagsanalyse', help='Zeigt Diagramme, welche die Feiertage näher analysieren,')
+if holiday:
+    get_holiday()
 
 #Buttons für Time Series Analysis
 tsa = st.sidebar.button('Zeitreihenanalyse', help='Erzeugt Diagramme, welche zeitabhängige Features analysieren')
@@ -114,12 +118,12 @@ st.sidebar.markdown('---') # Räumliche Trennung
 st.sidebar.markdown('# Prognose:', help='In diesem Abschnitt werden Weekly Sales mithilfe von Machine Learning vorausgesagt.' )
 
 # Random Forest
-pred_rf = st.sidebar.button('Random Forest Prognose', help='Hier werden die Weekly_Sales mithilfe des Random Forest-Modells geschätzt.')
+pred_rf = st.sidebar.button('XGBoost', help='Hier werden die Weekly_Sales mithilfe des Random Forest-Modells geschätzt.')
 if pred_rf:
     sales_forecast()
 
 # Sarimax
-pred_sx = st.sidebar.button('SARIMAX Prognose', help='Hier werden die Weekly_Sales mithilfe des SARIMAX-Modells geschätzt.')
+pred_sx = st.sidebar.button('SARIMAX', help='Hier werden die Weekly_Sales mithilfe des SARIMAX-Modells geschätzt.')
 if pred_sx:
     sales_forecast_sx() 
 

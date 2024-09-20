@@ -41,9 +41,6 @@ def clean_data(stores, features, train, test):
     train['Weekly_Sales'] = train['Weekly_Sales'].apply(lambda x: train['Weekly_Sales'].mean() if x < 0 else x)
 
 
-    
-    
-
     return stores, features, train, test
 
 def create_date_features(df):

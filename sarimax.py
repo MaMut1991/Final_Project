@@ -57,7 +57,7 @@ def sales_forecast_sx():
 
     # Splitte die Daten in Trainings- und Testset
     y_train = merge_train['Weekly_Sales']
-    y_test = merge_test['Weekly_Sales']
+    #y_test = merge_test['Weekly_Sales']
 
     exog_train = exog_features.loc[merge_train.index]
     exog_test = exog_features.loc[merge_test.index]
@@ -88,7 +88,7 @@ def sales_forecast_sx():
     ax.set_xlabel('Years')
     ax.set_ylabel('Weekly Sales')
     plt.legend()
-    plt.show()
+    st.pyplot(plt.gfc())
 
 
     # Tabelle mit den vorhergesagten Werten für Weekly_Sales anzeigen

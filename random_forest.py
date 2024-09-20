@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 import joblib
+from xgboost import XGBRegressor
 
 from preprocessing import data_preprocessing
 
@@ -27,7 +28,7 @@ fontsize_axes =15
 
 
 
-
+'''
 def get_tuned_model_random_forest():
 
     # Import merge_train
@@ -38,10 +39,12 @@ def get_tuned_model_random_forest():
     y = merge_train['Weekly_Sales']     # Nur Weekly_Sales (Target) 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)     
 
-    model = RandomForestRegressor()
+    model = RandomForestRegressor(n_estimators=70, min_samples_split=3, min_samples_leaf=1, max_depth=30, max_features=3)
     model.fit(X_train,y_train)
+    # model.scores = cross_val_score(model,X_train, y_train, cv=10)
+    #np.mean(model_scores)
 
-    '''
+    
     # Hyperparameter für GridSearch festlegen
     param_grid = {
         'n_estimators': [50, 100, 150, 200],
@@ -50,12 +53,12 @@ def get_tuned_model_random_forest():
         'max_features': ['sqrt', 'log2', 'auto', None],
         'max_leaf_nodes':[3,6,9]
     }
-    '''
+    
 
     param_grid = {
-        'n_estimators': [50],
+        'n_estimators': 100,
     }
-
+    
     # RandomForest mit GridSearchCV
     model = RandomForestRegressor()
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=2, n_jobs=-1)
@@ -66,7 +69,7 @@ def get_tuned_model_random_forest():
 
     # Modell in pkl-Datei speichern
     joblib.dump(tuned_model, 'random_forest_model.pkl')
-    
+    '''
     
 
 
@@ -104,18 +107,18 @@ def visualizing_forecasts(y_test_future):
     st.markdown('Weekly Predictions:')
     table1 = y_test_future_with_date.set_index('Date')
     table1.index = pd.to_datetime(table1.index).strftime('%Y-%m-%d')
-    daily = table1.groupby(table1.index)['Weekly_Sales'].mean()
+    daily = table1.groupby(table1.index)['Weekly_Sales'].mean().round()
     st.dataframe(daily.round(2))
 
     
 
 
 # Bewertung der Modellleistung auf dem Trainings- und Testdatensatz
-def evaluate_model(tuned_model, X_train, y_train, X_test, y_test):
+def evaluate_model(model, X_train, y_train, X_test, y_test):
 
     # Vorhersagen auf Trainings- und Testdaten (basierend auf train.csv)
-    y_train_pred = tuned_model.predict(X_train)
-    y_test_pred = tuned_model.predict(X_test)  
+    y_train_pred = model.predict(X_train)
+    y_test_pred = model.predict(X_test)  
 
     # Berechnung der Metriken auf Trainingsdaten (basierend auf train.csv)
     mse_train = mean_squared_error(y_train, y_train_pred)
@@ -139,24 +142,30 @@ def sales_forecast():
     # Import merge_train
     merge_train, merge_test = data_preprocessing()
 
-    # Tuned_Model laden
-    tuned_model = joblib.load('random_forest_model.pkl')
-
     # Splitte Trainingsdaten (train.csv) in train und test 
-    X = merge_train.drop(['Date','Year', 'Month', 'Week', 'Weekly_Sales'], axis=1) # Alle Originalfeatures (ohne Weekly_Sales = Target und ohne Zeitkomponenten) 
+    X = merge_train.drop(['Date','Year', 'Month','Week', 'Weekly_Sales', 'Fuel_Price', 'IsHoliday'], axis=1) # Alle Originalfeatures (ohne Weekly_Sales = Target und ohne Zeitkomponenten) 
     y = merge_train['Weekly_Sales']     # Nur Weekly_Sales (Target) 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101) 
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)     
+
+    # Modell trainieren
+    #model = RandomForestRegressor(n_estimators=70, min_samples_split=3, min_samples_leaf=1, max_depth=30, max_features=3)
+    #model = RandomForestRegressor(n_estimators=100, max_depth=10,min_samples_split=4,min_samples_leaf=4, max_features=9, max_samples=160000, random_state=101)
+    model=XGBRegressor(n_jobs=-1, random_state=42, n_estimators=1000, learning_rate=0.9, max_depth=15, subsample=0.9, colsample_bytree=0.7)
+    model.fit(X_train,y_train)
+    # model.scores = cross_val_score(model,X_train, y_train, cv=10)
+    #np.mean(model_scores)
+    
 
     # Überprüfung auf Overfitting und Underfitting
-    mse_train, rmse_train, mae_train, r2_train, mse_test, rmse_test, mae_test, r2_test = evaluate_model(tuned_model, X_train, y_train, X_test, y_test)
+    mse_train, rmse_train, mae_train, r2_train, mse_test, rmse_test, mae_test, r2_test = evaluate_model(model, X_train, y_train, X_test, y_test)
 
     
     # Prognosen für Zukunft erstellen (basierend auf train.csv)
 
     # Einführung zusätzlicher Testdatensatz aus merge_test für Schätzung und Visualisierung der Prognosen
-    X_test_future = merge_test.drop(['Date','Year', 'Month', 'Week'], axis=1)     # Features aus Testdatensatz (test.csv)
+    X_test_future = merge_test.drop(['Date','Year', 'Month', 'Week', 'Fuel_Price', 'IsHoliday'], axis=1)     # Features aus Testdatensatz (test.csv)
 
-    predictions = tuned_model.predict(X_test_future)
+    predictions = model.predict(X_test_future)
     y_test_future = pd.DataFrame({'Weekly_Sales': predictions})
 
     # Historische Daten und Forecasts visualisieren
@@ -173,7 +182,3 @@ def sales_forecast():
         st.write(f'\nWarning: Potential underfitting. Train RMSE is higher than Test RMSE.')
     else:
         st.write(f'\nThe model seems to be well-balanced.')
-
-
- 
-    
