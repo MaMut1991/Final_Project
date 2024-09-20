@@ -3,9 +3,9 @@
 import streamlit as st
 
 from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap, get_holiday
-from random_forest import visualizing_forecasts, sales_forecast
+from XGBoost import visualizing_forecasts, sales_forecast
 from time_series_analysis_2 import get_time_series
-from random_forest import sales_forecast
+from XGBoost import sales_forecast
 from sarimax import sales_forecast_sx
 
 st.set_page_config(layout='wide')
