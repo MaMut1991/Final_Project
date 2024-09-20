@@ -15,6 +15,8 @@ from statsmodels.tsa.stattools import adfuller
 
 
 # Datenvorbereitung
+
+@st.cache_data
 def get_time_series():
     store4 = 0
     store6 = 0
@@ -45,7 +47,7 @@ def get_time_series():
     # Visualisierung: Erstelle Zeitreihendiagramme der Target-Variable, um Trends, Saisonalitäten und Zyklen zu identifizieren.
     # Korrelation: Untersuche die Korrelation zwischen den Zeitvariablen und der Target-Variable. Verwende Heatmaps oder Scatterplots.
     # Histogramme: Erstelle Histogramme der nicht zeitabhängigen Variablen.
-    '''
+    
     # Weekly_Sales over Time (AVG) (Liniendiagramm)
     weekly_sales_mean = merge_train[['Date', 'Weekly_Sales']].copy()
     weekly_sales_mean['Date'] = pd.to_datetime(weekly_sales_mean['Date'])  # Sicherstellen, dass das Datum im richtigen Format ist
@@ -85,24 +87,32 @@ def get_time_series():
     fig4 = decomposition.plot()  # plot ohne 'ax'
     fig4.set_size_inches(15, 6)  # Größe anpassen
     st.pyplot(fig4)
-    '''
+    
 
 
     # 3. Zeitreihenanalysen
     
-    # Autokorrelationsplot erstellen - Test auf Saisonalität
-    plt.rcParams.update({'figure.figsize': (15, 6), 'figure.dpi': 120})
-    # Autokorrelationsplot
-    fig5 = plt.figure()  # Ein leeres Figure-Objekt erstellen
-    autocorrelation_plot(merge_train['Weekly_Sales'].tolist())
-    plt.title("Autokorrelationsplot - Test auf Saisonalität der Weekly_Sales", fontsize=20)  # Titel setzen
-    st.pyplot(fig5)
+    @st.cache_resource
+    def autocorr():
+        # Autokorrelationsplot erstellen - Test auf Saisonalität
+        plt.rcParams.update({'figure.figsize': (15, 6), 'figure.dpi': 120})
+        # Autokorrelationsplot
+        fig5 = plt.figure()  # Ein leeres Figure-Objekt erstellen
+        autocorrelation_plot(merge_train['Weekly_Sales'].tolist())
+        plt.title("Autokorrelationsplot - Test auf Saisonalität der Weekly_Sales", fontsize=20)  # Titel setzen
+        st.pyplot(fig5)
 
-    # ADF-Test durchführen (Test auf Stationarität)
-    result = adfuller(merge_train['Weekly_Sales'])
-    st.write('Augmented Dickey Fuller (ADF) Statistic:', result[0])
-    st.write('p-value:', result[1])
-    st.write('(Bei p < 0.05 liegt eine Stationarität vor.)')
+    autocorr()
+
+    @st.cache_resource
+    def adf():
+        # ADF-Test durchführen (Test auf Stationarität)
+        result = adfuller(merge_train['Weekly_Sales'])
+        st.write('Augmented Dickey Fuller (ADF) Statistic:', result[0])
+        st.write('p-value:', result[1])
+        st.write('(Bei p < 0.05 liegt eine Stationarität vor.)')
+
+    adf()
 
 
 
