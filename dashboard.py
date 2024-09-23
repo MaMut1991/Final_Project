@@ -2,6 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+sns.set_style('darkgrid')
 
 import streamlit as st
 import matplotlib.ticker as mticker
@@ -34,10 +35,10 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
     '''
 
     # Vordefinierte Farbpaletten
-    color_palette_1 = ['#70FF3E']    # 1 Farbe für Diagramm
-    color_palette_2 = ['#70FF3E','#FF6C3E']    # 2 Farben für Diagramm
-    color_palette_3 = ['#70FF3E','#FF6C3E','#3ED1FF']    # 3 Farben für Diagramm
-    color_palette_4 = ['#70FF3E','#FF6C3E','#3ED1FF','#CD3EFF']    # 4 Farben für Diagramm
+    color_palette_1 = ['#FF6C3E']    # 1 Farbe für Diagramm
+    color_palette_2 = ['#FF6C3E','#3ED1FF']    # 2 Farben für Diagramm
+    color_palette_3 = ['#FF6C3E','#3ED1FF','#70FF3E']    # 3 Farben für Diagramm
+    color_palette_4 = ['#FF6C3E','#3ED1FF','#70FF3E','#CD3EFF']    # 4 Farben für Diagramm
     
     # Vordefinierte Schriftgrößen für Achsen und Titel
     fontsize_title = 20
@@ -56,7 +57,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
     def plot_line(df, x, y, ax, title, xlabel, ylabel, hue=None):
         """Zeichnet ein Liniendiagramm."""
-        sns.lineplot(x=x, y=y, hue=hue, data=df, palette=color_palette_1, ax=ax)
+        sns.lineplot(x=x, y=y, hue=hue, data=df, color=color_palette_1[0], ax=ax)
         ax.set_title(title, fontsize=fontsize_title)
         ax.set_xlabel(xlabel, fontsize = fontsize_axes)
         ax.set_ylabel(ylabel, fontsize = fontsize_axes)
@@ -80,12 +81,12 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
             # Zeichne Balkendiagramm
             fig, ax = plt.subplots(figsize=(15,6))
-            plot_bar(agg_data, 'x', 'y1', ax, 'Gewünschte Auswertung', x, y1)
+            plot_bar(agg_data, 'x', 'y1', ax, 'Analysis of the desired parameters', x, y1)
 
             plt.tight_layout()
             st.pyplot(fig)
 
-        # Case1.2: x == Date -> Zeitreihenanalyse per Liniendiagramm
+        # Case1.2: x == Date ->Liniendiagramm
         else:
 
             # Zeitreihe Plot 2 (Liniendiagramm)
@@ -93,7 +94,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             agg_data = agg_func().reset_index()
 
             fig, ax = plt.subplots(figsize=(15,6))
-            plot_line(agg_data, 'x', 'y1', ax, 'Gewünschte Auswertung', x, y1)
+            plot_line(agg_data, 'x', 'y1', ax, 'Analysis of the desired parameters', 'Years', y1)
 
             plt.tight_layout()
             st.pyplot(fig)
@@ -117,8 +118,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
             # Plot erstellen
             sns.lineplot(data=datetime_aggregated, x='Month', y='Weekly_Sales', ax=ax2, hue='Year', palette=color_palette_3)
-            ax2.set_title('Gewünschte Auswertung', fontsize = fontsize_title)
-            ax2.set_xlabel(x, fontsize = fontsize_axes)
+            ax2.set_title('Analysis of the desired parameters', fontsize = fontsize_title)
+            ax2.set_xlabel('Months', fontsize = fontsize_axes)
             ax2.set_ylabel(y1, fontsize = fontsize_axes)
             ax2.grid(True,linestyle='-')
 
@@ -144,7 +145,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             'Week': merge_train['Date'].dt.isocalendar().week,
             'y1': merge_train[y1], # Variable für die y1-Achse
             'y2': merge_train[y2],  # Variable für die y2-Achse
-            'Type':merge_train['Type']
+            'Type':merge_train['Type'],
+            'Size':merge_train['Size']
         })
 
         # Wähle die Aggregationsfunktion
@@ -165,7 +167,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             fig, ax1 = plt.subplots(figsize=(15,6))  
 
             sns.lineplot(x='x', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
             ax1.set_xlabel('Year', fontsize=fontsize_axes)  # 'Date' als Label
             ax1.legend(loc='upper left')
@@ -194,7 +196,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             fig, ax1 = plt.subplots(figsize=(15,6))  
 
             sns.lineplot(x='Month', y='y1', data=df_choice_aggregated_c2_1, palette=color_palette_3, ax=ax1, hue='Year')
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
             ax1.set_xlabel('Month', fontsize=fontsize_axes)  # 'Month' als Label
             ax1.legend(loc='upper left')
@@ -224,7 +226,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             fig, ax1 = plt.subplots(figsize=(15,6))  
 
             sns.lineplot(x='x', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
             ax1.set_xlabel('Date', fontsize=fontsize_axes)  # 'Date' als Label
             ax1.legend(loc='upper left')
@@ -253,7 +255,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
 
 
-        elif (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and x != 'Date' and (y1 == 'Size' or y2 == 'Size'):
+        elif (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and x != 'Date' and (y1 == 'Size' or y2 == 'Size') and x != 'Dept':
      
 
             # Plot 1
@@ -265,7 +267,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
             
             sns.barplot(x='x', y='y1', data=df_choice, color=color_palette_2[0], ax=ax1)
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
             ax1.set_xlabel(x, fontsize=fontsize_axes)
             ax1.grid(True,linestyle='-', alpha=0.7)
@@ -299,9 +301,10 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Zeichne Balkendiagramm (x und y1)
 
             sns.barplot(x='x', y='y1', data=df_choice, palette=color_palette_3, ax=ax1, hue='Type')
-            ax1.set_title(f"Auswertung der gewünschten Parameter", fontsize=fontsize_title)
+            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1,fontsize=fontsize_axes)
             ax1.set_xlabel(x, fontsize=fontsize_axes)
+            ax1.legend(title='Type',loc='upper left')
             ax1.grid(True,linestyle='-', alpha=0.7)
             
 
@@ -324,6 +327,9 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             plt.tight_layout()
             st.pyplot(fig2)
 
+        else:
+            st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
+
 
 
        
@@ -338,7 +344,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         # Case3.2: y1 == Store 
 
         if y1 == 'Store' and x == 'Size':
-            
+            st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
             '''
             # Barchart Stores, Size, Typen
         
@@ -378,9 +384,10 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
         # Case 3.3: y1 == Dept 
 
-        '''
+        
         if y1 == 'Dept':
-            
+            st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
+            '''   
             # Wähle die Aggregationsfunktion
             if operation == 'Mittelwert':
                 agg_data_c3_3 = merge_train.groupby('Dept')['Weekly_Sales'].mean().reset_index()
@@ -406,7 +413,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
             if x == 'Date':
             
-
                 df_c3_4 = pd.DataFrame({'Date':merge_train['Date'],
                                         'Year':merge_train['Date'].dt.year, 
                                         'Month':merge_train['Date'].dt.month,
@@ -432,9 +438,9 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                 sns.lineplot(x='Month', y='Temperature', hue='Year', data=temperatur_aggregated_c3_4, palette=color_palette_3,ax=ax)
 
                 # Setze Titel und Achsenbeschriftungen und Raster
-                ax.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+                ax.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
                 ax.set_xlabel('Months', fontsize=fontsize_axes)
-                ax.set_ylabel(y1, fontsize=fontsize_axes)
+                ax.set_ylabel('Temperature', fontsize=fontsize_axes)
                 ax.grid(True, linestyle='-', alpha=0.7)
                 plt.tight_layout()
                 st.pyplot(fig)
@@ -443,8 +449,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                 # Lineplot erstellen auf Jahresbasis
     
                 fig2, ax2 = plt.subplots(figsize=(15,6))
-                sns.lineplot(x='Date', y='Temperature', data=temperatur_c3_4, palette=color_palette_1)
-                ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+                sns.lineplot(x='Date', y='Temperature', data=temperatur_c3_4, color=color_palette_1[0])
+                ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
                 ax2.set_xlabel('Years', fontsize=fontsize_axes)
                 ax2.set_ylabel('Temperature', fontsize=fontsize_axes)
                 ax2.grid(True,linestyle='-', alpha=0.7)
@@ -489,8 +495,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             sns.lineplot(x='Month', y='CPI', hue='Year', data=cpi_aggregated_c3_5, palette=color_palette_3, ax=ax1)
 
             # Setze Titel und Achsenbeschriftungen 
-            ax1.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax1.set_xlabel('Month', fontsize=fontsize_axes)
+            ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax1.set_xlabel('Months', fontsize=fontsize_axes)
             ax1.set_ylabel('CPI', fontsize=fontsize_axes)
             ax1.grid(True,linestyle='-')
 
@@ -501,10 +507,10 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Lineplot erstellen auf Jahresbasis
 
             fig2, ax2 = plt.subplots(figsize=(15,6))
-            sns.lineplot(x='Date', y='CPI', data=cpi_aggregated_c3_5_date, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+            sns.lineplot(x='Date', y='CPI', data=cpi_aggregated_c3_5_date, color=color_palette_1[0])
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
             ax2.set_xlabel('Years', fontsize=fontsize_axes)
-            ax2.set_ylabel('Temperature', fontsize=fontsize_axes)
+            ax2.set_ylabel('CPI', fontsize=fontsize_axes)
             ax2.grid(True,linestyle='-', alpha=0.7)
 
             plt.tight_layout()
@@ -547,7 +553,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             sns.lineplot(x='Month', y='Unemployment', hue='Year', data=unemployment_aggregated_c3_6, palette=color_palette_3,ax=ax)
 
             # Setze Titel und Achsenbeschriftungen 
-            ax.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+            ax.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
             ax.set_xlabel('Months', fontsize=fontsize_axes)
             ax.set_ylabel('Unemployment', fontsize=fontsize_axes)
             ax.grid(True, linestyle='-')
@@ -560,19 +566,16 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Lineplot erstellen auf Jahresbasis
        
             fig2, ax2 = plt.subplots(figsize=(15,6))
-            sns.lineplot(x='Date', y='Unemployment', data=unemployment_aggregated_c3_6_date, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+            sns.lineplot(x='Date', y='Unemployment', data=unemployment_aggregated_c3_6_date, palette=color_palette_1[0])
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
             ax2.set_xlabel('Years', fontsize=fontsize_axes)
             ax2.set_ylabel('Unemployment', fontsize=fontsize_axes)
             ax2.grid(True,linestyle='-', alpha=0.7)
             plt.tight_layout()
             st.pyplot(fig2)
 
-
         elif y1 == 'Unemployment' and x != 'Date':
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
-
-
 
 
         # Case 3.7: y1 == IsHoliday  
@@ -603,7 +606,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             sns.lineplot(x='Month', y='IsHoliday', data=isholiday_aggregated_c3_7, ax=ax, palette=color_palette_3, hue='Year')
 
             # Setze Titel und Achsenbeschriftungen
-            ax.set_title('Auswertung der gewünschten Parameter ', fontsize=fontsize_title)
+            ax.set_title('Analysis of the desired parameters ', fontsize=fontsize_title)
             ax.set_xlabel('Months', fontsize=fontsize_axes)
             ax.set_ylabel('Holidays', fontsize=fontsize_axes)
             ax.grid(True,linestyle='-')
@@ -618,7 +621,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='IsHoliday', data=isholiday_aggregated_date_c3_7, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
             ax2.set_xlabel('Years', fontsize=fontsize_axes)
             ax2.set_ylabel('Holidays', fontsize=fontsize_axes)
             ax2.grid(True,linestyle='-', alpha=0.7)
@@ -639,8 +642,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         
 
             fig,ax = plt.subplots(figsize=(15,6))
-            sns.barplot(x='Store',y='Size',data=merge_train,hue=merge_train['Type'], palette='cool',order=merge_train.sort_values('Size')['Store'].tolist())
-            ax.set_title('Auswertung der gewünschten Parameter',fontsize=fontsize_title)
+            sns.barplot(x='Store',y='Size',data=merge_train,hue=merge_train['Type'], palette=color_palette_4,order=merge_train.sort_values('Size')['Store'].tolist())
+            ax.set_title('Analysis of the desired parameters',fontsize=fontsize_title)
             ax.set_xlabel('Stores', fontsize=fontsize_axes)
             ax.set_ylabel('Size', fontsize=fontsize_axes)
             ax.grid(True,linestyle='-')
@@ -677,9 +680,9 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
        
             fig, ax = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Month', y='Fuel_Price', hue='Year', data=fuelprice_aggregated_c3_9_2, palette=color_palette_3, ax=ax)
-            ax.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax.set_xlabel('Monate', fontsize=fontsize_axes)
-            ax.set_ylabel('Fuel_Price', fontsize=fontsize_axes)
+            ax.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax.set_xlabel('Months', fontsize=fontsize_axes)
+            ax.set_ylabel('Fuel Price', fontsize=fontsize_axes)
             plt.tight_layout()
             ax.grid(True,linestyle='-')
             st.pyplot(fig)  
@@ -687,10 +690,10 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Zeichne Liniendiagramm nach Jahren
   
             fig1, ax1 = plt.subplots(figsize=(15,6))
-            sns.lineplot(x='Date', y='Fuel_Price', data=fuelprice_aggregated_c3_9_1, ax=ax1)
-            ax1.set_title('Durchschnittlicher Fuel Price pro Jahr', fontsize=fontsize_title)
-            ax1.set_xlabel('Jahre', fontsize=fontsize_axes)
-            ax1.set_ylabel('Fuel_Price', fontsize=fontsize_axes)
+            sns.lineplot(x='Date', y='Fuel_Price', data=fuelprice_aggregated_c3_9_1, ax=ax1,color=color_palette_1[0])
+            ax1.set_title('Auswertung gewünschter Parameter', fontsize=fontsize_title)
+            ax1.set_xlabel('Years', fontsize=fontsize_axes)
+            ax1.set_ylabel('Fuel Price', fontsize=fontsize_axes)
             plt.tight_layout()
             st.pyplot(fig1)  # Zeige das erste Diagramm
 
@@ -728,8 +731,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle das Diagramm1 - Nur MarkDown1 im Monatsverlauf
             fig1, ax1 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Month', y='MarkDown1', hue='Year', data=MD1_aggregated_c3_10, palette=color_palette_3, ax=ax1)
-            ax1.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax1.set_xlabel('Month', fontsize=fontsize_axes)
+            ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax1.set_xlabel('Months', fontsize=fontsize_axes)
             ax1.set_ylabel('MarkDown1', fontsize=fontsize_axes)
             ax1.grid(True,linestyle='-')
             plt.tight_layout()
@@ -743,8 +746,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
           
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='MarkDown1', data=MD1_aggregated_c3_10_date, ax=ax2, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax2.set_xlabel('Year', fontsize=fontsize_axes)
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax2.set_xlabel('Years', fontsize=fontsize_axes)
             ax2.set_ylabel('MarkDown1', fontsize=fontsize_axes)
             plt.tight_layout()
             ax2.grid(True,linestyle='-')
@@ -777,8 +780,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle Diagramm2 - Alle MarkDowns im Jahresverlauf
             fig3, ax3 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='Value', hue='MarkDown', data=df_c3_10_long, palette='cool', ax=ax3)
-            ax3.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax3.set_xlabel('Year', fontsize=fontsize_axes)
+            ax3.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax3.set_xlabel('Years', fontsize=fontsize_axes)
             ax3.set_ylabel('MarkDowns 1-5', fontsize=fontsize_axes)
             ax3.grid(True,linestyle='-')
             plt.tight_layout()
@@ -817,8 +820,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle das Diagramm1 - Nur MarkDown2 im Monatsverlauf
             fig1, ax1 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Month', y='MarkDown2', hue='Year', data=MD2_aggregated_c3_11, palette=color_palette_3, ax=ax1)
-            ax1.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax1.set_xlabel('Month', fontsize=fontsize_axes)
+            ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax1.set_xlabel('Months', fontsize=fontsize_axes)
             ax1.set_ylabel('MarkDown2', fontsize=fontsize_axes)
             ax1.grid(True,linestyle='-')
             plt.tight_layout()
@@ -831,8 +834,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='MarkDown2', data=MD2_aggregated_c3_11_date, ax=ax2, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax2.set_xlabel('Year', fontsize=fontsize_axes)
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax2.set_xlabel('Years', fontsize=fontsize_axes)
             ax2.set_ylabel('MarkDown2', fontsize=fontsize_axes)
             plt.tight_layout()
             ax2.grid(True,linestyle='-')
@@ -865,8 +868,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle Diagramm2 - Alle MarkDowns im Jahresverlauf
             fig3, ax3 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='Value', hue='MarkDown', data=df_c3_11_long, palette='cool', ax=ax3)
-            ax3.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax3.set_xlabel('Year', fontsize=fontsize_axes)
+            ax3.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax3.set_xlabel('Years', fontsize=fontsize_axes)
             ax3.set_ylabel('MarkDowns 1-5', fontsize=fontsize_axes)
             ax3.grid(True,linestyle='-')
             plt.tight_layout()
@@ -907,8 +910,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle das Diagramm1 - Nur MarkDown3 im Monatsverlauf
             fig1, ax1 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Month', y='MarkDown3', hue='Year', data=MD3_aggregated_c3_12, palette=color_palette_3, ax=ax1)
-            ax1.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax1.set_xlabel('Month', fontsize=fontsize_axes)
+            ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax1.set_xlabel('Months', fontsize=fontsize_axes)
             ax1.set_ylabel('MarkDown3', fontsize=fontsize_axes)
             ax1.grid(True,linestyle='-')
             plt.tight_layout()
@@ -922,8 +925,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
     
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='MarkDown3', data=MD3_aggregated_c3_12_date, ax=ax2, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax2.set_xlabel('Year', fontsize=fontsize_axes)
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax2.set_xlabel('Years', fontsize=fontsize_axes)
             ax2.set_ylabel('MarkDown3', fontsize=fontsize_axes)
             plt.tight_layout()
             ax2.grid(True,linestyle='-')
@@ -956,8 +959,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle Diagramm2 - Alle MarkDowns im Jahresverlauf
             fig3, ax3 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='Value', hue='MarkDown', data=df_c3_12_long, palette='cool', ax=ax3)
-            ax3.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax3.set_xlabel('Year', fontsize=fontsize_axes)
+            ax3.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax3.set_xlabel('Years', fontsize=fontsize_axes)
             ax3.set_ylabel('MarkDowns 1-5', fontsize=fontsize_axes)
             ax3.grid(True,linestyle='-')
             plt.tight_layout()
@@ -998,8 +1001,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle das Diagramm1 - Nur MarkDown4 im Monatsverlauf
             fig1, ax1 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Month', y='MarkDown4', hue='Year', data=MD4_aggregated_c3_13, palette=color_palette_3, ax=ax1)
-            ax1.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax1.set_xlabel('Month', fontsize=fontsize_axes)
+            ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax1.set_xlabel('Months', fontsize=fontsize_axes)
             ax1.set_ylabel('MarkDown4', fontsize=fontsize_axes)
             ax1.grid(True,linestyle='-')
             plt.tight_layout()
@@ -1012,8 +1015,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
       
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='MarkDown4', data=MD4_aggregated_c3_13_date, ax=ax2, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax2.set_xlabel('Year', fontsize=fontsize_axes)
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax2.set_xlabel('Years', fontsize=fontsize_axes)
             ax2.set_ylabel('MarkDown4', fontsize=fontsize_axes)
             plt.tight_layout()
             ax2.grid(True,linestyle='-')
@@ -1046,8 +1049,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle Diagramm2 - Alle MarkDowns im Jahresverlauf
             fig3, ax3 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='Value', hue='MarkDown', data=df_c3_13_long, palette='cool', ax=ax3)
-            ax3.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax3.set_xlabel('Year', fontsize=fontsize_axes)
+            ax3.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax3.set_xlabel('Years', fontsize=fontsize_axes)
             ax3.set_ylabel('MarkDowns 1-5', fontsize=fontsize_axes)
             ax3.grid(True,linestyle='-')
             plt.tight_layout()
@@ -1088,8 +1091,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle das Diagramm1 - Nur MarkDown5 im Monatsverlauf
             fig1, ax1 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Month', y='MarkDown5', hue='Year', data=MD5_aggregated_c3_14, palette=color_palette_3, ax=ax1)
-            ax1.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax1.set_xlabel('Month', fontsize=fontsize_axes)
+            ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax1.set_xlabel('Months', fontsize=fontsize_axes)
             ax1.set_ylabel('MarkDown5', fontsize=fontsize_axes)
             ax1.grid(True,linestyle='-')
             plt.tight_layout()
@@ -1103,8 +1106,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
            
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='MarkDown5', data=MD5_aggregated_c3_14_date, ax=ax2, palette=color_palette_1)
-            ax2.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax2.set_xlabel('Year', fontsize=fontsize_axes)
+            ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax2.set_xlabel('Years', fontsize=fontsize_axes)
             ax2.set_ylabel('MarkDown5', fontsize=fontsize_axes)
             plt.tight_layout()
             ax2.grid(True,linestyle='-')
@@ -1137,8 +1140,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Erstelle Diagramm2 - Alle MarkDowns im Jahresverlauf
             fig3, ax3 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='Value', hue='MarkDown', data=df_c3_14_long, palette='cool', ax=ax3)
-            ax3.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
-            ax3.set_xlabel('Year', fontsize=fontsize_axes)
+            ax3.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+            ax3.set_xlabel('Years', fontsize=fontsize_axes)
             ax3.set_ylabel('MarkDowns 1-5', fontsize=fontsize_axes)
             ax3.grid(True,linestyle='-')
             plt.tight_layout()
@@ -1183,8 +1186,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             fig1, ax1 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y=y1, data=agg_c4_year, color='blue', ax=ax1, label=y1)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
-            ax1.set_xlabel(x, fontsize=fontsize_axes)
-            ax1.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+            ax1.set_xlabel('Years', fontsize=fontsize_axes)
+            ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
             ax1.legend(loc='upper left')
             ax1.grid(True,linestyle='-')
 
@@ -1203,8 +1206,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             fig2, ax3 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Month', y=y1, data=agg_c4_month, color='blue', ax=ax3, hue='Year', palette=color_palette_3)
             ax3.set_ylabel(y1, fontsize=fontsize_axes)
-            ax3.set_xlabel('Month', fontsize=fontsize_axes)
-            ax3.set_title('Auswertung der gewünschten Parameter', fontsize=fontsize_title)
+            ax3.set_xlabel('Months', fontsize=fontsize_axes)
+            ax3.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
             ax3.legend(loc='upper left')
             ax3.grid(True,linestyle='-')
 
@@ -1228,10 +1231,10 @@ def show_corr():
     merge_train, merge_test = data_preprocessing()
 
     # Vordefinierte Farbpaletten
-    color_palette_1 = ['#70FF3E']    # 1 Farbe für Diagramm
-    color_palette_2 = ['#70FF3E','#FF6C3E']    # 2 Farben für Diagramm
-    color_palette_3 = ['#70FF3E','#FF6C3E','#3ED1FF']    # 3 Farben für Diagramm
-    color_palette_4 = ['#70FF3E','#FF6C3E','#3ED1FF','#CD3EFF']    # 4 Farben für Diagramm
+    color_palette_1 = ['#FF6C3E']    # 1 Farbe für Diagramm
+    color_palette_2 = ['#FF6C3E','#3ED1FF']    # 2 Farben für Diagramm
+    color_palette_3 = ['#FF6C3E','#3ED1FF','#70FF3E']    # 3 Farben für Diagramm
+    color_palette_4 = ['#FF6C3E','#3ED1FF','#70FF3E','#CD3EFF']    # 4 Farben für Diagramm
 
     fontsize_title = 20
     fontsize_axes =15
@@ -1239,7 +1242,8 @@ def show_corr():
     # Erstelle Barplot
     fig1, ax1 = plt.subplots(figsize=(15,6))
     merge_train.corr()['Weekly_Sales'].abs().sort_values()[:-1].plot(kind='bar', ax=ax1, color=color_palette_1)
-    ax1.set_title('Feature Korrelationen:', fontsize=fontsize_title)
+    ax1.set_title('Correlation Analysis:', fontsize=fontsize_title)
+    ax1.set_ylabel('Correlation Coefficients')
     
     # Zeige das Diagramm in Streamlit an
     st.pyplot(fig1)
@@ -1261,9 +1265,9 @@ def get_store_department_sales_heatmap():
 
     fig1, ax1 = plt.subplots(figsize=(120,60))
     sns.heatmap(pivot_table, cmap="YlGnBu", annot=True, fmt=".1f")
-    plt.title('Weekly Sales Heatmap by Store and Department (sorted by sales)', fontsize=70)
-    plt.xlabel('Store', fontsize=50)
-    plt.ylabel('Department', fontsize=50)
+    plt.title('Sales Heatmap by Store and Department', fontsize=100)
+    plt.xlabel('Store', fontsize=70)
+    plt.ylabel('Department', fontsize=70)
     st.pyplot(fig1)
 
 # Heatmap Type-Department-Weekly_Sales - Kombinationen
@@ -1274,21 +1278,21 @@ def get_type_department_sales_heatmap():
     pivot_table = merge_train.pivot_table(index='Dept', columns='Type', values='Weekly_Sales', aggfunc='sum')
 
 
-    fig2, ax1 = plt.subplots(figsize=(20,120))
+    fig2, ax1 = plt.subplots(figsize=(20,100))
     sns.heatmap(pivot_table, cmap="YlGnBu", annot=True, fmt=".1f")
-    plt.title('Weekly Sales Heatmap by Type and Department', fontsize=70)
-    plt.xlabel('Type', fontsize=50)
-    plt.ylabel('Department', fontsize=50)
+    plt.title('Sales Heatmap by Type and Department', fontsize=20)
+    plt.xlabel('Type', fontsize=15)
+    plt.ylabel('Department', fontsize=15)
     st.pyplot(fig2)
 
 # Feiertagsanalyse
 def get_holiday():
+
     # Vordefinierte Farbpaletten
-    
-    color_palette_1 = ['#70FF3E']    # 1 Farbe für Diagramm
-    color_palette_2 = ['#70FF3E','#FF6C3E']    # 2 Farben für Diagramm
-    color_palette_3 = ['#70FF3E','#FF6C3E','#3ED1FF']    # 3 Farben für Diagramm
-    color_palette_4 = ['#70FF3E','#FF6C3E','#3ED1FF','#CD3EFF']    # 4 Farben für Diagramm
+    color_palette_1 = ['#FF6C3E']    # 1 Farbe für Diagramm
+    color_palette_2 = ['#FF6C3E','#3ED1FF']    # 2 Farben für Diagramm
+    color_palette_3 = ['#FF6C3E','#3ED1FF','#70FF3E']    # 3 Farben für Diagramm
+    color_palette_4 = ['#FF6C3E','#3ED1FF','#70FF3E','#CD3EFF']    # 4 Farben für Diagramm
 
     
 
