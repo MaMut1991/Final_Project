@@ -17,10 +17,12 @@ from preprocessing import data_preprocessing
 
 
 # Vordefinierte Farbpaletten
-color_palette_1 = ['#763DFF']    # 1 Farbe für Diagramm
-color_palette_2 = ['#763DFF', '#FF3D65']    # 2 Farben für Diagramm
-color_palette_3 = ['#763DFF', '#FF3D65', '#C6FF3D']    # 3 Farben für Diagramm
-color_palette_4 = ['#763DFF', '#FF3D65', '#C6FF3D', '#3DFFD7']    # 4 Farben für Diagramm
+
+# Vordefinierte Farbpaletten
+color_palette_1 = ['#70FF3E']    # 1 Farbe für Diagramm
+color_palette_2 = ['#70FF3E','#FF6C3E']    # 2 Farben für Diagramm
+color_palette_3 = ['#70FF3E','#FF6C3E','#3ED1FF']    # 3 Farben für Diagramm
+color_palette_4 = ['#70FF3E','#FF6C3E','#3ED1FF','#CD3EFF']    # 4 Farben für Diagramm
 
 # Vordefinierte Schriftgrößen für Achsen und titel
 fontsize_title = 20

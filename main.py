@@ -17,7 +17,7 @@ col1 = st.columns(1)
 
 
 
-# st.session_state oder st.cache?
+
 
 
 
