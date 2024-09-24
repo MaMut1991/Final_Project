@@ -2,11 +2,11 @@
 
 import streamlit as st
 
-from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap, get_holiday
-from XGBoost import visualizing_forecasts, sales_forecast
+from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap, get_holiday, get_markdown
+from XGBoost import sales_forecast
 from time_series_analysis_2 import get_time_series
 from XGBoost import sales_forecast
-from sarimax import sales_forecast_sx
+
 
 st.set_page_config(layout='wide')
 
@@ -14,8 +14,6 @@ st.set_page_config(layout='wide')
 # Titel
 st.header('SalesEcho © (Prototyp)')
 col1 = st.columns(1)
-
-
 
 # Sidebar
 
@@ -36,11 +34,15 @@ holiday = st.sidebar.button('Holiday Analysis', help='Displays charts to analyze
 if holiday:
     get_holiday()
 
+# MarkDownanalyse
+markdown = st.sidebar.button('MarkDown Analysis', help='Displays charts to analyze the MarkDowns in more detail.')
+if markdown:
+    get_markdown()
+
 #Buttons für Time Series Analysis
 tsa = st.sidebar.button('Time Series Analysis', help='Generates charts that analyze time-dependent features.')
 if tsa:
     get_time_series()
-
 
 # Button für Dashboard
 db = st.sidebar.button('Sales Dashboard', help='Visualizes a sales dashboard to gain key insights into the dataset.')
@@ -48,24 +50,17 @@ db = st.sidebar.button('Sales Dashboard', help='Visualizes a sales dashboard to 
 if db:
     get_dashboard()
 
-
 # Button für Store-Department-Sales-Heatmap
 heat_store = st.sidebar.button('Sales Heatmap by Store and Dept.', help='Generates a heatmap that compares stores against departments. The values correspond to Weekly Sales.')
 if heat_store:
     get_store_department_sales_heatmap()  
-
 
 # Button für Type-Department-Sales-Heatmap
 heat_type = st.sidebar.button('Sales Heatmap by Type and Dept.', help='Generates a heatmap that compares store types against departments. The values correspond to Weekly Sales.')
 if heat_type:
     get_type_department_sales_heatmap()
 
-
-
 st.sidebar.markdown('---') # Räumliche Trennung 
-
-
-
 
 st.sidebar.markdown('#### Creation of Custom Charts:')
 
@@ -89,7 +84,7 @@ else:
     y2_achse = None
 
 # Operation wählen
-option_operation = ['Mean', 'Sum']
+option_operation = ['Average', 'Sum']
 
 operation = st.sidebar.selectbox('Display as sum or average?:',options=option_operation, placeholder='Rechenoperation', help='Decide whether the charts should display the average or the sum of the desired data.')
 
@@ -100,20 +95,14 @@ show_me = st.sidebar.button('Create Diagrams', help='Generates charts based on t
 if show_me:
     create_diagram(y1 = y1_achse, y2=y2_achse, x=x_achse, operation=operation)
 
-
-
-
 st.sidebar.markdown('---') # Räumliche Trennung 
 
 
 
-
 # Prognose
+st.sidebar.markdown('# Forecast:', help='In this section, Weekly Sales are predicted using a Machine Learning algorithm called XGBoost.' )
 
-
-st.sidebar.markdown('# Forecast:', help='In this section, Weekly Sales are predicted using machine learning.' )
-
-# Random Forest
-pred_rf = st.sidebar.button('XGBoost', help='Here, the Weekly_Sales are estimated using the Random Forest model.')
+# XGBoost
+pred_rf = st.sidebar.button('Start XGBoost', help='Here, the Weekly_Sales are estimated using the Random Forest model.')
 if pred_rf:
     sales_forecast()

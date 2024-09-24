@@ -5,8 +5,6 @@ import seaborn as sns
 sns.set_style('darkgrid')
 
 import streamlit as st
-import matplotlib.ticker as mticker
-import streamlit.components.v1 as components
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from preprocessing import data_preprocessing
@@ -18,9 +16,9 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
     Diese Funktion soll Parameter aus der Web-App entgegennehmen und gemäß der Eingabe entsprechende Diagramme zurückgeben.
     Dafür werden 4 Cases erstellt:
 
-    Case1: Es werden die Weekly_Sales auf der y-Achse und die Zeit, die Stores oder die Departments auf der x-Achse in einem Diagramm (mit nur 1 y-Achse) dargestellt. Man hat die Ausahl die Daten als Mittelwert oder Summe darzustellen und darf den betrachteten Zeitraum auswählen.
+    Case1: Es werden die Weekly_Sales auf der y-Achse und die Zeit, die Stores oder die Departments auf der x-Achse in einem Diagramm (mit nur 1 y-Achse) dargestellt. Man hat die Ausahl die Daten als Average oder Sum darzustellen und darf den betrachteten Zeitraum auswählen.
 
-    Case2: Es werden die Weekly_Sales auf der y-Achse und die Zeit, die Stores oder die Departments auf der x-Achse in einem Diagramm dargestellt. Im Gegensatz zu Case 1 kann hier eine zweite y-Achse für eine zweite Variable (frei wählbar) eingefügt werden. Man hat die Auswahl die Weekly_Sales als Mittelwert oder Summe darzustellen und darf den betrachteten Zeitraum auswählen.
+    Case2: Es werden die Weekly_Sales auf der y-Achse und die Zeit, die Stores oder die Departments auf der x-Achse in einem Diagramm dargestellt. Im Gegensatz zu Case 1 kann hier eine zweite y-Achse für eine zweite Variable (frei wählbar) eingefügt werden. Man hat die Auswahl die Weekly_Sales als Average oder Sum darzustellen und darf den betrachteten Zeitraum auswählen.
 
     Case3: Es wird eine beliebige Variable, welche nicht die Weekly_Sales ist, in einem Diagramm mit einer y-Achse dargestellt. Auf der x-Achse werden ebenso nicht die Weekly_Sales berücksichtigt.
 
@@ -31,7 +29,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
     y1: Variable Nr. 1, welche auf der linken y-Achse dargestellt wird
     y2: Variable Nr. 2, welche auf der rechten y-Achse dargestellt wird
     x: in der App ausgewählte Variable, welche auf der x-Achse dargestellt wird. Zur Auswahl stehen Store, Department und Zeit.
-    operation: Daten als Mittelwert oder Summe auswerten und visualisieren
+    operation: Daten als Average oder Sum auswerten und visualisieren
     '''
 
     # Vordefinierte Farbpaletten
@@ -60,7 +58,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         sns.lineplot(x=x, y=y, hue=hue, data=df, color=color_palette_1[0], ax=ax)
         ax.set_title(title, fontsize=fontsize_title)
         ax.set_xlabel(xlabel, fontsize = fontsize_axes)
-        ax.set_ylabel(ylabel, fontsize = fontsize_axes)
+        ax.set_ylabel('ylabel', fontsize = fontsize_axes)
         ax.grid(True, linestyle='-')
 
     # Case1: 1 Achse: var1 ist weekly sales
@@ -76,7 +74,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         if x != 'Date':
 
             # Wähle die Aggregationsfunktion
-            agg_func = df_choice.groupby('x').mean if operation == 'Mittelwert' else df_choice.groupby('x').sum
+            agg_func = df_choice.groupby('x').mean if operation == 'Average' else df_choice.groupby('x').sum
             agg_data = agg_func().reset_index()
 
             # Zeichne Balkendiagramm
@@ -90,7 +88,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         else:
 
             # Zeitreihe Plot 2 (Liniendiagramm)
-            agg_func = df_choice.groupby('x').mean if operation == 'Mittelwert' else df_choice.groupby('x').sum
+            agg_func = df_choice.groupby('x').mean if operation == 'Average' else df_choice.groupby('x').sum
             agg_data = agg_func().reset_index()
 
             fig, ax = plt.subplots(figsize=(15,6))
@@ -99,7 +97,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             plt.tight_layout()
             st.pyplot(fig)
 
-            # Zeitreihe Plot 3 (Liniendiagramm nach Monaten mit 1 Linie pro Jahr)
+            # Zeitreihe Plot 2 (Liniendiagramm nach Monaten mit 1 Linie pro Jahr)
             fig2, ax2 = plt.subplots(figsize=(15,6))
 
             # Data Frame mit Jahren, Wochen, Monaten und Weekly_Sales erstellen
@@ -112,8 +110,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             })
 
             # Wähle die Aggregationsfunktion
-            agg_func = df_datetime.groupby(['Year', 'Month']).mean if operation == 'Mittelwert' else df_datetime.groupby(['Year', 'Month']).sum
-            datetime_aggregated = agg_func({'Weekly_Sales': 'mean' if operation == 'Mittelwert' else 'sum'}).reset_index()
+            agg_func = df_datetime.groupby(['Year', 'Month']).mean if operation == 'Average' else df_datetime.groupby(['Year', 'Month']).sum
+            datetime_aggregated = agg_func({'Weekly_Sales': 'mean' if operation == 'Average' else 'sum'}).reset_index()
 
 
             # Plot erstellen
@@ -127,208 +125,127 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.pyplot(fig2)
 
 
+            # Liniendiagramm nach Wochen
+            fig3, ax1 = plt.subplots(figsize=(15,6))
+
+            # Data Frame mit Jahren, Wochen, Monaten und Weekly_Sales erstellen
+            df_datetime = pd.DataFrame({
+                'Date': merge_train['Date'],
+                'Year': merge_train['Date'].dt.year, 
+                'Month': merge_train['Date'].dt.month,
+                'Week': merge_train['Date'].dt.isocalendar().week,
+                'Day':merge_train['Date'].dt.day,
+                'Weekly_Sales': merge_train['Weekly_Sales']
+            })
+
+            # Wähle die Aggregationsfunktion
+            agg_func = df_datetime.groupby(['Year', 'Month','Week']).mean if operation == 'Average' else df_datetime.groupby(['Year', 'Month','Week']).sum
+            datetime_aggregated = agg_func({'Weekly_Sales': 'mean' if operation == 'Average' else 'sum'}).reset_index()
+
+            # Plot erstellen
+            sns.lineplot(data=datetime_aggregated, x='Week', y='Weekly_Sales', ax=ax1, hue='Year', palette=color_palette_3)
+            ax1.set_title('Analysis of the desired parameters', fontsize = fontsize_title)
+            ax1.set_xlabel('Weeks', fontsize = fontsize_axes)
+            ax1.set_ylabel(y1, fontsize = fontsize_axes)
+            ax1.grid(True, linestyle='-')
+
+            # Schrittweite der x-Achse auf 5er-Schritte setzen mit xticks
+            weeks = datetime_aggregated['Week'].unique()
+            ax1.set_xticks(range(min(weeks), max(weeks) + 1, 1))
+
+            plt.tight_layout()
+            st.pyplot(fig3)
+      
 
 
-            
+    # Case 2: 2 Achsen, var1 oder var2 sind Weekly Sales
+    if (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and y2 is not None and x == 'Date':
 
-
-    # Case2: 2 Achsen, var1 oder var2 sind weekly sales
-
-    if (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and y2 is not None:
-        
-        
         # Temporärer DataFrame für die getätigte Auswahl in der App
         df_choice = pd.DataFrame({
-            'x': merge_train[x],   # Variable für die x-Achse
-            'Year':merge_train['Date'].dt.year,
+            'Date': merge_train[x],   # Variable für die x-Achse
+            'Year': merge_train['Date'].dt.year,
             'Month': merge_train['Date'].dt.month,
             'Week': merge_train['Date'].dt.isocalendar().week,
-            'y1': merge_train[y1], # Variable für die y1-Achse
-            'y2': merge_train[y2],  # Variable für die y2-Achse
-            'Type':merge_train['Type'],
-            'Size':merge_train['Size']
+            'y1': merge_train[y1],    # Variable für die y1-Achse
+            'y2': merge_train[y2],    # Variable für die y2-Achse
+            'Type': merge_train['Type']
         })
 
         # Wähle die Aggregationsfunktion
-        if operation == 'Mittelwert' and x == 'Date':
+        if operation == 'Average':
             df_choice_aggregated_c2_1 = df_choice.groupby(['Year', 'Month']).agg({'y1': 'mean', 'y2':'mean'}).reset_index()
-            df_choice_aggregated_c2_1_date = df_choice.groupby('x').agg({'y1':'mean', 'y2':'mean'}).reset_index()
-        elif operation == 'Summe' and x == 'Date':
+            df_choice_aggregated_c2_1_date = df_choice.groupby('Date').agg({'y1': 'mean', 'y2':'mean'}).reset_index()
+        elif operation == 'Sum':
             df_choice_aggregated_c2_1 = df_choice.groupby(['Year', 'Month']).agg({'y1': 'sum', 'y2':'sum'}).reset_index()
-            df_choice_aggregated_c2_1_date = df_choice.groupby('x').agg({'y1':'sum', 'y2':'sum'}).reset_index()
+            df_choice_aggregated_c2_1_date = df_choice.groupby('Date').agg({'y1': 'sum', 'y2':'sum'}).reset_index()
 
-
-        if y1 == 'Weekly_Sales' and x == 'Date' and y2 not in ['Type', 'Size', 'Dept']:   # Falls y1 gleich Weekly_Sales ist
-           
-            
-            # Plot 1: Lineplot auf Jahresbasis
-
-            # Erstelle Figur und die erste Achse
+        # Plot 1: Lineplot auf Jahresbasis
+        if y1 == 'Weekly_Sales' and y2 not in ['Type', 'Size', 'Dept']:
             fig, ax1 = plt.subplots(figsize=(15,6))  
 
-            sns.lineplot(x='x', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
-            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
+            # Zeichne y1 (Weekly Sales)
+            sns.lineplot(x='Date', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
+            ax1.set_title("Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
             ax1.set_xlabel('Year', fontsize=fontsize_axes)  # 'Date' als Label
             ax1.legend(loc='upper left')
             ax1.grid(True, linestyle='-')
-           
-            
-            # Erstelle zweite y-Achse
-            ax2 = ax1.twinx()
 
-                      
-            # Zeichne y2 als Linie auf ax2
-            sns.lineplot(x='x', y='y2', data=df_choice_aggregated_c2_1_date, color=color_palette_2[1], ax=ax2, label=y2)
+            # Zweite y-Achse für y2
+            ax2 = ax1.twinx()
+            sns.lineplot(x='Date', y='y2', data=df_choice_aggregated_c2_1_date, color=color_palette_2[1], ax=ax2, label=y2)
             ax2.set_ylabel(y2, fontsize=fontsize_axes)
             ax2.legend(loc='upper right')
-            
-            
-            # Layout anpassen und anzeigen
+
             plt.tight_layout()
             st.pyplot(fig)
-
-
 
             # Plot 2: Lineplot auf Monatsbasis
+            fig, ax1 = plt.subplots(figsize=(15,6))
 
-            # Erstelle Figur und die erste Achse
-            fig, ax1 = plt.subplots(figsize=(15,6))  
-
-            sns.lineplot(x='Month', y='y1', data=df_choice_aggregated_c2_1, palette=color_palette_3, ax=ax1, hue='Year')
-            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
+            # Zeichne y1 (Monatsbasis)
+            sns.lineplot(x='Month', y='y1', data=df_choice_aggregated_c2_1, hue='Year', palette=color_palette_3, ax=ax1)
+            ax1.set_title("Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
-            ax1.set_xlabel('Month', fontsize=fontsize_axes)  # 'Month' als Label
+            ax1.set_xlabel('Month', fontsize=fontsize_axes)
             ax1.legend(loc='upper left')
             ax1.grid(True, linestyle='-')
-           
-            
-            # Erstelle zweite y-Achse
-            ax2 = ax1.twinx()
 
-                      
-            # Zeichne y2 als Linie auf ax2
-            sns.lineplot(x='Month', y='y2', data=df_choice_aggregated_c2_1, palette='Wistia', ax=ax2, hue='Year')
+            # Zweite y-Achse für y2
+            ax2 = ax1.twinx()
+            sns.lineplot(x='Month', y='y2', data=df_choice_aggregated_c2_1, hue='Year', palette='Wistia', ax=ax2)
             ax2.set_ylabel(y2, fontsize=fontsize_axes)
             ax2.legend(loc='upper right')
-            
-            
-            # Layout anpassen und anzeigen
+
             plt.tight_layout()
             st.pyplot(fig)
 
-
-
-        elif y2 == 'Weekly_Sales' and x == 'Date' and y1 not in ['Type', 'Size', 'Dept']:  # Falls y2 gleich Weekly_Sales ist
-     
-
-            # Erstelle Figur und die erste Achse
+        # Case: Wenn y2 gleich Weekly_Sales ist
+        elif y2 == 'Weekly_Sales' and y1 not in ['Type', 'Size', 'Dept']:
             fig, ax1 = plt.subplots(figsize=(15,6))  
 
-            sns.lineplot(x='x', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
-            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
+            sns.lineplot(x='Date', y='y1', data=df_choice_aggregated_c2_1_date, color=color_palette_2[0], ax=ax1, label=y1)
+            ax1.set_title("Analysis of the desired parameters", fontsize=fontsize_title)
             ax1.set_ylabel(y1, fontsize=fontsize_axes)
-            ax1.set_xlabel('Date', fontsize=fontsize_axes)  # 'Date' als Label
+            ax1.set_xlabel('Date', fontsize=fontsize_axes)
             ax1.legend(loc='upper left')
             ax1.grid(True, linestyle='-')
-            
-            
-            # Erstelle zweite y-Achse
-            ax2 = ax1.twinx()
 
-                        
-            # Zeichne y2 als Linie auf ax2
-            sns.lineplot(x='x', y='y2', data=df_choice_aggregated_c2_1_date, color=color_palette_2[1], ax=ax2, label=y2)
+            ax2 = ax1.twinx()
+            sns.lineplot(x='Date', y='y2', data=df_choice_aggregated_c2_1_date, color=color_palette_2[1], ax=ax2, label=y2)
             ax2.set_ylabel(y2, fontsize=fontsize_axes)
             ax2.legend(loc='upper right')
-            
-            
-            # Layout anpassen und anzeigen
+
             plt.tight_layout()
             st.pyplot(fig)
 
-
-
+        # Falls die x-Achse nicht 'Date' ist und y1/y2 gleich 'Weekly_Sales' ist
         elif (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and x != 'Date' and not (y1 == 'Size' or y2 == 'Size'):
-     
             st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
 
 
 
-        elif (y1 == 'Weekly_Sales' or y2 == 'Weekly_Sales') and x != 'Date' and (y1 == 'Size' or y2 == 'Size') and x != 'Dept':
-     
-
-            # Plot 1
-
-            # Erstelle Figur und die erste Achse
-            fig1, ax1 = plt.subplots(figsize=(15,6))
-
-            # Zeichne Balkendiagramm (x und y1)
-
-            
-            sns.barplot(x='x', y='y1', data=df_choice, color=color_palette_2[0], ax=ax1)
-            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
-            ax1.set_ylabel(y1, fontsize=fontsize_axes)
-            ax1.set_xlabel(x, fontsize=fontsize_axes)
-            ax1.grid(True,linestyle='-', alpha=0.7)
-            
-
-            # Erstelle zweite y-Achse
-            ax2 = ax1.twinx()
-
-            # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
-                agg_data = df_choice.groupby('x').mean().reset_index()
-            else:
-                agg_data = df_choice.groupby('x').sum().reset_index()
-
-            # Zeichne y2 als Linie auf ax2
-            ax2.plot(ax1.get_xticks(), agg_data['y2'], color=color_palette_4[-1],label=y2)
-            ax2.set_ylabel(y2, fontsize=fontsize_axes)
-            ax2.legend(loc='upper right')
-            
-
-            # Layout anpassen und anzeigen
-            plt.tight_layout()
-            st.pyplot(fig1)
-
-
-            # Plot 2
-
-            # Erstelle Figur und die erste Achse
-            fig2, ax1 = plt.subplots(figsize=(15,6))
-
-            # Zeichne Balkendiagramm (x und y1)
-
-            sns.barplot(x='x', y='y1', data=df_choice, palette=color_palette_3, ax=ax1, hue='Type')
-            ax1.set_title(f"Analysis of the desired parameters", fontsize=fontsize_title)
-            ax1.set_ylabel(y1,fontsize=fontsize_axes)
-            ax1.set_xlabel(x, fontsize=fontsize_axes)
-            ax1.legend(title='Type',loc='upper left')
-            ax1.grid(True,linestyle='-', alpha=0.7)
-            
-
-            # Erstelle zweite y-Achse
-            ax2 = ax1.twinx()
-
-            # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
-                agg_data = df_choice.groupby('x').mean().reset_index()
-            else:
-                agg_data = df_choice.groupby('x').sum().reset_index()
-
-            # Zeichne y2 als Linie auf ax2
-            ax2.plot(ax1.get_xticks(), agg_data['y2'], color=color_palette_4[-1],label=y2)
-            ax2.set_ylabel(y2, fontsize=fontsize_axes)
-            ax2.legend(loc='upper right')
-            
-
-            # Layout anpassen und anzeigen
-            plt.tight_layout()
-            st.pyplot(fig2)
-
-        else:
-            st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
 
 
 
@@ -361,7 +278,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Barchart Store, Weekly_Sales
        
             # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 agg_data_c3_2 = merge_train.groupby('Store')['Weekly_Sales'].mean().reset_index()
             else:
                 agg_data_c3_2 = merge_train.groupby('Store')['Weekly_Sales'].sum().reset_index()
@@ -389,7 +306,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
             '''   
             # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 agg_data_c3_3 = merge_train.groupby('Dept')['Weekly_Sales'].mean().reset_index()
             else:
                 agg_data_c3_3 = merge_train.groupby('Dept')['Weekly_Sales'].sum().reset_index()
@@ -421,7 +338,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                     
                     
                 # Wähle die Aggregationsfunktion
-                if operation == 'Mittelwert':
+                if operation == 'Average':
                     temperatur_aggregated_c3_4 = df_c3_4.groupby(['Year', 'Month']).agg({'Temperature': 'mean'}).reset_index()
                     temperatur_c3_4 = df_c3_4.groupby('Date').agg({'Temperature': 'mean'}).reset_index()
                 else:
@@ -478,7 +395,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             })
             
             # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 cpi_aggregated_c3_5 = df_c3_5.groupby(['Year', 'Month']).agg({'CPI': 'mean'}).reset_index()
                 cpi_aggregated_c3_5_date = df_c3_5.groupby('Date').agg({'CPI': 'mean'}).reset_index()
             else:
@@ -536,7 +453,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                 
                 
             # Wähle die Aggregationsfunktion
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 unemployment_aggregated_c3_6 = df_c3_6.groupby(['Year', 'Month']).agg({'Unemployment': 'mean'}).reset_index()
                 unemployment_aggregated_c3_6_date = df_c3_6.groupby('Date').agg({'Unemployment': 'mean'}).reset_index()
             else:
@@ -588,10 +505,10 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                                     'Week': merge_train['Date'].dt.isocalendar().week,
                                     'IsHoliday': merge_train['IsHoliday']})
 
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 isholiday_aggregated_c3_7 = df_c3_7.groupby(['Year', 'Month']).agg({'IsHoliday': 'mean'}).reset_index()
                 isholiday_aggregated_date_c3_7 = df_c3_7.groupby('Date').agg({'IsHoliday': 'mean'}).reset_index()
-            elif operation == 'Summe':
+            elif operation == 'Sum':
                 isholiday_aggregated_c3_7 = df_c3_7.groupby(['Year', 'Month']).agg({'IsHoliday': 'sum'}).reset_index()
                 isholiday_aggregated_date_c3_7 = df_c3_7.groupby('Date').agg({'IsHoliday': 'sum'}).reset_index()
             
@@ -668,7 +585,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             })
 
             # Wähle die Aggregationsfunktion 
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 fuelprice_aggregated_c3_9_1 = df_c3_9.groupby(['Date']).agg({'Fuel_Price': 'mean'}).reset_index() 
                 fuelprice_aggregated_c3_9_2 = df_c3_9.groupby(['Year', 'Month']).agg({'Fuel_Price': 'mean'}).reset_index()  
             else:
@@ -720,7 +637,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                                     'MarkDown5':merge_train['MarkDown5']})
             
             # Wähle die Aggregationsfunktion 
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 MD1_aggregated_c3_10_date = df_c3_10.groupby(['Date']).agg({'MarkDown1': 'mean'}).reset_index() 
                 MD1_aggregated_c3_10 = df_c3_10.groupby(['Year', 'Month']).agg({'MarkDown1': 'mean'}).reset_index()  
             else:
@@ -754,7 +671,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.pyplot(fig2)  
 
             
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 df_c3_10_agg = df_c3_10.groupby('Date').agg({
                     'MarkDown1': 'mean',
                     'MarkDown2': 'mean',
@@ -809,7 +726,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                                     'MarkDown5':merge_train['MarkDown5']})
             
             # Wähle die Aggregationsfunktion 
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 MD2_aggregated_c3_11_date = df_c3_11.groupby(['Date']).agg({'MarkDown2': 'mean'}).reset_index() 
                 MD2_aggregated_c3_11 = df_c3_11.groupby(['Year', 'Month']).agg({'MarkDown2': 'mean'}).reset_index()  
             else:
@@ -842,7 +759,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.pyplot(fig2)  
 
             
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 df_c3_11_agg = df_c3_11.groupby('Date').agg({
                     'MarkDown1': 'mean',
                     'MarkDown2': 'mean',
@@ -899,7 +816,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                                     'MarkDown5':merge_train['MarkDown5']})
             
             # Wähle die Aggregationsfunktion 
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 MD3_aggregated_c3_12_date = df_c3_12.groupby(['Date']).agg({'MarkDown3': 'mean'}).reset_index() 
                 MD3_aggregated_c3_12 = df_c3_12.groupby(['Year', 'Month']).agg({'MarkDown3': 'mean'}).reset_index()  
             else:
@@ -933,7 +850,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.pyplot(fig2)  
 
             
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 df_c3_12_agg = df_c3_12.groupby('Date').agg({
                     'MarkDown1': 'mean',
                     'MarkDown2': 'mean',
@@ -990,7 +907,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                                     'MarkDown5':merge_train['MarkDown5']})
             
             # Wähle die Aggregationsfunktion 
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 MD4_aggregated_c3_13_date = df_c3_13.groupby(['Date']).agg({'MarkDown4': 'mean'}).reset_index() 
                 MD4_aggregated_c3_13 = df_c3_13.groupby(['Year', 'Month']).agg({'MarkDown4': 'mean'}).reset_index()  
             else:
@@ -1023,7 +940,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.pyplot(fig2)  
 
             
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 df_c3_13_agg = df_c3_13.groupby('Date').agg({
                     'MarkDown1': 'mean',
                     'MarkDown2': 'mean',
@@ -1080,7 +997,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                                     'MarkDown5':merge_train['MarkDown5']})
             
             # Wähle die Aggregationsfunktion 
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 MD5_aggregated_c3_14_date = df_c3_14.groupby(['Date']).agg({'MarkDown5': 'mean'}).reset_index() 
                 MD5_aggregated_c3_14 = df_c3_14.groupby(['Year', 'Month']).agg({'MarkDown5': 'mean'}).reset_index()  
             else:
@@ -1114,7 +1031,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.pyplot(fig2)  
 
             
-            if operation == 'Mittelwert':
+            if operation == 'Average':
                 df_c3_14_agg = df_c3_14.groupby('Date').agg({
                     'MarkDown1': 'mean',
                     'MarkDown2': 'mean',
@@ -1170,7 +1087,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         })
 
         # Wähle die Aggregationsfunktion
-        if operation == 'Mittelwert':
+        if operation == 'Average':
             agg_c4_month = df_c4.groupby(['Year', 'Month']).agg({y1: 'mean', y2: 'mean'}).reset_index()
             agg_c4_year = df_c4.groupby('Date').agg({y1: 'mean', y2: 'mean'}).reset_index()
         else:
@@ -1253,7 +1170,7 @@ def show_corr():
 def get_store_department_sales_heatmap():
     merge_train, merge_test = data_preprocessing()
 
-    # Berechne die Summe der Weekly_Sales pro Store
+    # Berechne die Sum der Weekly_Sales pro Store
     store_sales_summary = merge_train.groupby('Store')['Weekly_Sales'].sum().reset_index()
 
     # Sortiere Stores nach den Umsätzen
@@ -1287,40 +1204,31 @@ def get_type_department_sales_heatmap():
 
 # Feiertagsanalyse
 def get_holiday():
-
     # Vordefinierte Farbpaletten
     color_palette_1 = ['#FF6C3E']    # 1 Farbe für Diagramm
     color_palette_2 = ['#FF6C3E','#3ED1FF']    # 2 Farben für Diagramm
     color_palette_3 = ['#FF6C3E','#3ED1FF','#70FF3E']    # 3 Farben für Diagramm
     color_palette_4 = ['#FF6C3E','#3ED1FF','#70FF3E','#CD3EFF']    # 4 Farben für Diagramm
 
+    # Funktion aus preprocessing.py importieren
+    merge_train, merge_test = data_preprocessing()
     
+    fig1,ax1 = plt.subplots(nrows=2,ncols=3,figsize=(15,6))
+
+
+    
+
+#MarkDownanalyse
+def get_markdown():
+    # Vordefinierte Farbpaletten
+    color_palette_1 = ['#FF6C3E']    # 1 Farbe für Diagramm
+    color_palette_2 = ['#FF6C3E','#3ED1FF']    # 2 Farben für Diagramm
+    color_palette_3 = ['#FF6C3E','#3ED1FF','#70FF3E']    # 3 Farben für Diagramm
+    color_palette_4 = ['#FF6C3E','#3ED1FF','#70FF3E','#CD3EFF']    # 4 Farben für Diagramm
 
     # Funktion aus preprocessing.py importieren
     merge_train, merge_test = data_preprocessing()
-
-    # Gruppiere nach Feiertagen/Nicht-Feiertagen
-    holiday_sales = merge_train.groupby('IsHoliday')['Weekly_Sales'].mean()
-    holiday_counts = merge_train['IsHoliday'].value_counts()
-
-    # Erstelle Subplots
-    fig = make_subplots(rows=1, cols=2, subplot_titles=("Holidays/Nonholidays Sales AVG", "Holidays/Nonholidays Counts"))
-
-    # Farben definieren
-    color_palette_2 = ['#763DFF', '#FF3D65']
-
-    # Hinzufügen der Balkendiagramme mit Farben
-    fig.add_trace(go.Bar(x=holiday_sales.values, y=holiday_sales.index, 
-                        orientation='h', marker_color=color_palette_2), 1, 1)
-
-    fig.add_trace(go.Bar(x=holiday_counts.values, y=holiday_counts.index, 
-                        orientation='h', marker_color=color_palette_2), 1, 2)
-
-    # Layout anpassen
-    fig.update_layout(showlegend=False)
-
-    # Zeige die Diagramme
-    fig.show()
+    pass
 
 
 
