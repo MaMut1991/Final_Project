@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def load_data():
     """Lädt die CSV-Dateien und gibt sie als DataFrames zurück."""
@@ -66,6 +67,48 @@ def merge_data(stores, features, train, test):
     
     return merge_train, merge_test
 
+
+# Feiertage (ohne Ostern) zu merge_train hinzufügen
+def get_holiday_without_Easter(merge_train):
+    # Datumsdefinitionen
+    super_bowl_dates = ['2010-02-12', '2011-02-11', '2012-02-10', '2013-02-08']  # Super Bowl Dates
+    labor_day_dates = ['2010-09-10', '2011-09-09', '2012-09-07', '2013-09-06']   # Labor Day Dates
+    thanksgiving_dates = ['2010-11-26', '2011-11-25', '2012-11-23', '2013-11-29'] # Thanksgiving Dates
+    christmas_dates = ['2010-12-31', '2011-12-30', '2012-12-28', '2013-12-27']    # Christmas Dates
+
+    # Spalten in Features initial hinzufügen und auf 0 setzen
+    merge_train['Super_Bowl'] = 0
+    merge_train['Labor_Day'] = 0
+    merge_train['Thanksgiving'] = 0
+    merge_train['Christmas'] = 0
+
+    # 1 in entsprechender Spalte setzen, wenn Datum stimmt und in IsHoliday ebenfalls eine 1 steht.
+    merge_train.loc[(merge_train['IsHoliday'] == 1) & (merge_train['Month'] == 2),'Super_Bowl']=1
+    merge_train.loc[(merge_train['IsHoliday'] == 1) & (merge_train['Month'] == 9), 'Labor_Day'] = 1
+    merge_train.loc[(merge_train['IsHoliday'] == 1) & (merge_train['Month'] == 11), 'Thanksgiving'] = 1
+    merge_train.loc[(merge_train['IsHoliday'] == 1) & (merge_train['Month'] == 12), 'Christmas'] = 1
+    
+    return merge_train
+
+
+def get_Easter(merge_train):
+
+    # Spalten in merge_train initial auf 0 setzen
+    merge_train['Easter'] = 0
+
+    # In entsprechender Woche und im entsprechenden Jahr 1 bei Easter setzen
+    # Jahr 2010, Week 13
+    merge_train.loc[(merge_train['Week'] == 13) & (merge_train['Year'] == 2010), 'Easter'] = 1
+
+    # Jahr 2011, Week 16
+    merge_train.loc[(merge_train['Week'] == 16) & (merge_train['Year'] == 2011), 'Easter'] = 1
+
+    # Jahr 2012, Week 14
+    merge_train.loc[(merge_train['Week'] == 14) & (merge_train['Year'] == 2012), 'Easter'] = 1
+
+    return merge_train
+
+
 def data_preprocessing():
     """Hauptfunktion zur Datenvorbereitung."""
     # Daten laden
@@ -81,11 +124,32 @@ def data_preprocessing():
     # Daten mergen
     merge_train, merge_test = merge_data(stores, features, train, test)
 
+    # Feiertage hinzufügen (ohne Ostern)
+    merge_train = get_holiday_without_Easter(merge_train)
+
+    # Ostern hinzufügen
+    merge_train = get_Easter(merge_train)
+
     return merge_train, merge_test
 
 
-merge_train, merge_test = data_preprocessing()
-
-#print(merge_train[merge_train['Weekly_Sales'] < 0])
 
 
+
+
+
+
+
+
+
+'''
+def export_merge_train():
+    # Korrigierter Aufruf: Die Funktion gibt vermutlich zwei DataFrames zurück, die separat gespeichert werden müssen
+    merge_train, merge_test = data_preprocessing()
+
+    # Exportiere 'merge_train' in eine CSV-Datei
+    merge_train.to_csv('merge_train_export.csv', index=False)
+
+# Funktion aufrufen
+export_merge_train()
+'''

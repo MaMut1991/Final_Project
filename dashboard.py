@@ -5,9 +5,7 @@ import seaborn as sns
 sns.set_style('darkgrid')
 
 import streamlit as st
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-from preprocessing import data_preprocessing
+from preprocessing import data_preprocessing, get_holiday_without_Easter
 
 
 
@@ -58,7 +56,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         sns.lineplot(x=x, y=y, hue=hue, data=df, color=color_palette_1[0], ax=ax)
         ax.set_title(title, fontsize=fontsize_title)
         ax.set_xlabel(xlabel, fontsize = fontsize_axes)
-        ax.set_ylabel('ylabel', fontsize = fontsize_axes)
+        ax.set_ylabel(ylabel, fontsize = fontsize_axes)
         ax.grid(True, linestyle='-')
 
     # Case1: 1 Achse: var1 ist weekly sales
@@ -1202,22 +1200,483 @@ def get_type_department_sales_heatmap():
     plt.ylabel('Department', fontsize=15)
     st.pyplot(fig2)
 
+
 # Feiertagsanalyse
 def get_holiday():
-    # Vordefinierte Farbpaletten
-    color_palette_1 = ['#FF6C3E']    # 1 Farbe für Diagramm
-    color_palette_2 = ['#FF6C3E','#3ED1FF']    # 2 Farben für Diagramm
-    color_palette_3 = ['#FF6C3E','#3ED1FF','#70FF3E']    # 3 Farben für Diagramm
-    color_palette_4 = ['#FF6C3E','#3ED1FF','#70FF3E','#CD3EFF']    # 4 Farben für Diagramm
 
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes =15
+
+    # Plot1: Overview over Holidays (Balkendiagramm für jeden Feiertag mit Total Sales)
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic1_Overview_Holidays.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Vordefinierte Farbpaletten
+    colors = ['#FF6C3E', '#3ED1FF', '#70FF3E', '#CD3EFF', '#FFDB3E']  # 5 Farben für 5 Feiertage
+    
     # Funktion aus preprocessing.py importieren
     merge_train, merge_test = data_preprocessing()
     
-    fig1,ax1 = plt.subplots(nrows=2,ncols=3,figsize=(15,6))
+    # Erstelle das Plot-Layout
+    fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(15, 10))
+    ax = ax.flatten()  # Um die 2D-Achsen zu einer 1D-Liste zu machen
+    
+    # Feiertags-Spalten und Farben
+    holidays = ['Christmas', 'Labor_Day', 'Super_Bowl', 'Thanksgiving', 'Easter']  # Nur 5 Feiertage
+    
+    # Für jeden Feiertag eine Balkendarstellung der Weekly_Sales plotten
+    for i, holiday in enumerate(holidays):
+        # Filtere nach dem aktuellen Feiertag
+        holiday_data = merge_train[merge_train[holiday] == 1]
+        
+        # Zeichne ein Balkendiagramm für Weekly_Sales basierend auf dem Jahr
+        holiday_data.groupby('Year')['Weekly_Sales'].sum().plot(kind='bar', ax=ax[i], color=colors[i])
+        
+        # Setze den Titel des Subplots
+        ax[i].set_title(f'{holiday}', fontsize=fontsize_title)
+        ax[i].set_xlabel('')
+        ax[i].set_ylabel('Sum of Sales', fontsize=fontsize_axes)
+    
+    # Letztes (leeres) Subplot entfernen, wenn es nur 5 Plots gibt
+    fig.delaxes(ax[-1])  # Entfernt die überflüssige Achse, da wir nur 5 Plots benötigen
+    
+    # Layout anpassen
+    plt.tight_layout()
+
+    # Überschrift einfügen
+    st.markdown("<h5 style='text-align: center;'>Overview over Holiday Sales</h5>", unsafe_allow_html=True)
+    
+    # Plot in Streamlit anzeigen
+    st.pyplot(fig)
+    '''
+
+    # Plot2: 
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic2.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes = 15
+
+    # Liniendiagramm nach Wochen
+    fig, ax1 = plt.subplots(figsize=(15, 6))
+
+    # Data Frame mit Jahren, Wochen, Monaten und Weekly_Sales erstellen
+    df_datetime = pd.DataFrame({
+        'Date': merge_train['Date'],
+        'Year': merge_train['Date'].dt.year,
+        'Month': merge_train['Date'].dt.month,
+        'Week': merge_train['Date'].dt.isocalendar().week,
+        'Day': merge_train['Date'].dt.day,
+        'Weekly_Sales': merge_train['Weekly_Sales']
+    })
+
+    # Wähle die Aggregationsfunktion und reset den Index
+    agg_func = df_datetime.groupby(['Date'])['Weekly_Sales'].mean().reset_index()
+
+    # Plot für die durchschnittlichen Verkäufe erstellen
+    sns.lineplot(data=agg_func, x='Date', y='Weekly_Sales', ax=ax1, color='blue', label='Average Weekly Sales')
+    ax1.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
+    ax1.set_xlabel('Date', fontsize=fontsize_axes)
+    ax1.set_ylabel('Average of Sales', fontsize=fontsize_axes)
+    ax1.grid(True, linestyle='-')
+
+    # Feiertagsverkäufe hinzufügen
+    holidays = ['Christmas', 'Labor_Day', 'Super_Bowl', 'Thanksgiving', 'Easter']
+    colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FFC300']  # Kräftigere Farbpalette für Feiertage
+
+    # Zweite Y-Achse für die Feiertagsverkäufe
+    ax2 = ax1.twinx()
+
+    for i, holiday in enumerate(holidays):
+        # Filtere nach dem aktuellen Feiertag
+        holiday_data = merge_train[merge_train[holiday] == 1]
+        
+        # Berechne die durchschnittlichen Verkaufszahlen für den Feiertag
+        holiday_sales = holiday_data.groupby('Date')['Weekly_Sales'].mean().reset_index()
+
+        # Füge Balkendiagramm für den Feiertag hinzu mit breiteren Balken
+        ax2.bar(holiday_sales['Date'], holiday_sales['Weekly_Sales'], color=colors[i], alpha=0.3, width=10, label=holiday, linestyle='--')
+
+    # Beschriftungen für die zweite Y-Achse
+    ax2.set_ylabel('Average of Holiday Sales', fontsize=fontsize_axes)
+
+    # Legend hinzufügen
+    ax1.legend(title='Average Weekly Sales', fontsize=fontsize_axes)
+    ax2.legend(holidays, title='Holidays', fontsize=fontsize_axes, loc='upper left')
+
+    plt.tight_layout()
+    st.pyplot(fig)
+    '''
+
+
+    # Plot3: Alle Markdowns + Feiertage + Weekly_Sales
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic3.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Schritt 1: DataFrame mit den notwendigen Spalten erstellen
+    df_datetime = pd.DataFrame({
+        'Date': merge_train['Date'],
+        'Weekly_Sales': merge_train['Weekly_Sales'],
+        'MarkDown1': merge_train['MarkDown1'],
+        'MarkDown2': merge_train['MarkDown2'],
+        'MarkDown3': merge_train['MarkDown3'],
+        'MarkDown4': merge_train['MarkDown4'],
+        'MarkDown5': merge_train['MarkDown5'],
+        'IsHoliday': merge_train['IsHoliday']  
+    })
+
+    # Schritt 2: Feiertage filtern
+    holidays = df_datetime[df_datetime['IsHoliday'] == 1]
+
+    # Schritt 3: Durchschnittliche Weekly_Sales pro Datum berechnen
+    agg_df = df_datetime.groupby('Date').agg({
+        'Weekly_Sales': 'mean',
+        'MarkDown1': 'mean',
+        'MarkDown2': 'mean',
+        'MarkDown3': 'mean',
+        'MarkDown4': 'mean',
+        'MarkDown5': 'mean'
+    }).reset_index()
+
+    # Schritt 4: DataFrame auf Datumsbereich ab Juli 2011 filtern
+    agg_df = agg_df[agg_df['Date'] >= '2011-07-01']
+
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes = 15
+
+    # Schritt 5: Plot erstellen
+    fig3, ax1 = plt.subplots(figsize=(15, 6))
+
+    # Schritt 6: Durchschnittliche Weekly Sales auf der ersten Y-Achse plotten
+    sns.lineplot(data=agg_df, x='Date', y='Weekly_Sales', ax=ax1, color='blue', label='Average Weekly Sales')
+    ax1.set_title('Average Weekly Sales and Markdowns Over Time', fontsize=fontsize_title)
+    ax1.set_xlabel('Date', fontsize=fontsize_axes)
+    ax1.set_ylabel('Average Weekly Sales', fontsize=fontsize_axes)
+    ax1.grid(True)
+
+    # Schritt 7: MarkDowns auf der zweiten Y-Achse plotten
+    ax2 = ax1.twinx()  # Zweite Y-Achse erstellen
+    for i in range(1, 6):
+        markdown_col = f'MarkDown{i}'
+        sns.lineplot(data=agg_df, x='Date', y=markdown_col, ax=ax2, label=markdown_col, alpha=0.6)
+
+    ax2.set_ylabel('Markdowns', fontsize=fontsize_axes)
+
+    # Schritt 8: Feiertage markieren
+    for index, row in holidays.iterrows():
+        if row['Date'] >= pd.Timestamp('2011-07-01'):  # Feiertage nur anzeigen, wenn sie nach dem Filterdatum liegen
+            ax1.axvline(x=row['Date'], color='red', linestyle='--', alpha=0.5)
+
+    # Schritt 9: Legende und Layout anpassen
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    plt.tight_layout()
+    st.pyplot(fig3) 
+    '''
+
+    # Plot4: Nur MarkDown1 + Feiertage + Weekly_Sales
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic4_MD1.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Schritt 1: DataFrame mit den notwendigen Spalten erstellen
+    df_datetime = pd.DataFrame({
+        'Date': merge_train['Date'],
+        'Weekly_Sales': merge_train['Weekly_Sales'],
+        'MarkDown1': merge_train['MarkDown1'],
+        'IsHoliday': merge_train['IsHoliday']  
+    })
+
+    # Schritt 2: Feiertage filtern
+    holidays = df_datetime[df_datetime['IsHoliday'] == 1]
+
+    # Schritt 3: Durchschnittliche Weekly_Sales pro Datum berechnen
+    agg_df = df_datetime.groupby('Date').agg({
+        'Weekly_Sales': 'mean',
+        'MarkDown1': 'mean'
+    }).reset_index()
+
+    # Schritt 4: DataFrame auf Datumsbereich ab Juli 2011 filtern
+    agg_df = agg_df[agg_df['Date'] >= '2011-07-01']
+
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes = 15
+
+    # Schritt 5: Plot erstellen
+    fig4, ax1 = plt.subplots(figsize=(15, 6))
+
+    # Schritt 6: Durchschnittliche Weekly Sales auf der ersten Y-Achse plotten
+    sns.lineplot(data=agg_df, x='Date', y='Weekly_Sales', ax=ax1, color='blue', label='Average Weekly Sales')
+    ax1.set_title('Average Weekly Sales and MarkDown1 Over Time', fontsize=fontsize_title)
+    ax1.set_xlabel('Date', fontsize=fontsize_axes)
+    ax1.set_ylabel('Average Weekly Sales', fontsize=fontsize_axes)
+    ax1.grid(True)
+
+    # Schritt 7: Nur MarkDown1 auf der zweiten Y-Achse plotten
+    ax2 = ax1.twinx()  # Zweite Y-Achse erstellen
+    sns.lineplot(data=agg_df, x='Date', y='MarkDown1', ax=ax2, color='orange', label='MarkDown1', alpha=0.6)
+    ax2.set_ylabel('MarkDown1', fontsize=fontsize_axes)
+
+    # Schritt 8: Feiertage markieren
+    for index, row in holidays.iterrows():
+        if row['Date'] >= pd.Timestamp('2011-07-01'):  # Feiertage nur anzeigen, wenn sie nach dem Filterdatum liegen
+            ax1.axvline(x=row['Date'], color='red', linestyle='--', alpha=0.5)
+
+    # Schritt 9: Legende und Layout anpassen
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    plt.tight_layout()
+    st.pyplot(fig4)
+    '''
+
+    # Plot5: Nur MarkDown2 + Feiertage + Weekly_Sales
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic5_MD2.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Schritt 1: DataFrame mit den notwendigen Spalten erstellen
+    df_datetime = pd.DataFrame({
+        'Date': merge_train['Date'],
+        'Weekly_Sales': merge_train['Weekly_Sales'],
+        'MarkDown2': merge_train['MarkDown2'],
+        'IsHoliday': merge_train['IsHoliday']  
+    })
+
+    # Schritt 2: Feiertage filtern
+    holidays = df_datetime[df_datetime['IsHoliday'] == 1]
+
+    # Schritt 3: Durchschnittliche Weekly_Sales pro Datum berechnen
+    agg_df = df_datetime.groupby('Date').agg({
+        'Weekly_Sales': 'mean',
+        'MarkDown2': 'mean'
+    }).reset_index()
+
+    # Schritt 4: DataFrame auf Datumsbereich ab Juli 2011 filtern
+    agg_df = agg_df[agg_df['Date'] >= '2011-07-01']
+
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes = 15
+
+    # Schritt 5: Plot erstellen
+    fig5, ax1 = plt.subplots(figsize=(15, 6))
+
+    # Schritt 6: Durchschnittliche Weekly Sales auf der ersten Y-Achse plotten
+    sns.lineplot(data=agg_df, x='Date', y='Weekly_Sales', ax=ax1, color='blue', label='Average Weekly Sales')
+    ax1.set_title('Average Weekly Sales and MarkDown2 Over Time', fontsize=fontsize_title)
+    ax1.set_xlabel('Date', fontsize=fontsize_axes)
+    ax1.set_ylabel('Average Weekly Sales', fontsize=fontsize_axes)
+    ax1.grid(True)
+
+    # Schritt 7: Nur MarkDown2 auf der zweiten Y-Achse plotten
+    ax2 = ax1.twinx()  # Zweite Y-Achse erstellen
+    sns.lineplot(data=agg_df, x='Date', y='MarkDown2', ax=ax2, color='orange', label='MarkDown2', alpha=0.6)
+    ax2.set_ylabel('MarkDown2', fontsize=fontsize_axes)
+
+    # Schritt 8: Feiertage markieren
+    for index, row in holidays.iterrows():
+        if row['Date'] >= pd.Timestamp('2011-07-01'):  # Feiertage nur anzeigen, wenn sie nach dem Filterdatum liegen
+            ax1.axvline(x=row['Date'], color='red', linestyle='--', alpha=0.5)
+
+    # Schritt 9: Legende und Layout anpassen
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    plt.tight_layout()
+    st.pyplot(fig5) 
+    '''
+
+    # Plot6: Nur MarkDown3 + Feiertage + Weekly_Sales
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic6_MD3.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Schritt 1: DataFrame mit den notwendigen Spalten erstellen
+    df_datetime = pd.DataFrame({
+        'Date': merge_train['Date'],
+        'Weekly_Sales': merge_train['Weekly_Sales'],
+        'MarkDown3': merge_train['MarkDown3'],  # Nur MarkDown3 verwenden
+        'IsHoliday': merge_train['IsHoliday']  
+    })
+
+    # Schritt 2: Feiertage filtern
+    holidays = df_datetime[df_datetime['IsHoliday'] == 1]
+
+    # Schritt 3: Durchschnittliche Weekly_Sales pro Datum berechnen
+    agg_df = df_datetime.groupby('Date').agg({
+        'Weekly_Sales': 'mean',
+        'MarkDown3': 'mean'  # Nur MarkDown3 aggregieren
+    }).reset_index()
+
+    # Schritt 4: DataFrame auf Datumsbereich ab Juli 2011 filtern
+    agg_df = agg_df[agg_df['Date'] >= '2011-07-01']
+
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes = 15
+
+    # Schritt 5: Plot erstellen
+    fig6, ax1 = plt.subplots(figsize=(15, 6))
+
+    # Schritt 6: Durchschnittliche Weekly Sales auf der ersten Y-Achse plotten
+    sns.lineplot(data=agg_df, x='Date', y='Weekly_Sales', ax=ax1, color='blue', label='Average Weekly Sales')
+    ax1.set_title('Average Weekly Sales and MarkDown3 Over Time', fontsize=fontsize_title)
+    ax1.set_xlabel('Date', fontsize=fontsize_axes)
+    ax1.set_ylabel('Average Weekly Sales', fontsize=fontsize_axes)
+    ax1.grid(True)
+
+    # Schritt 7: Nur MarkDown3 auf der zweiten Y-Achse plotten
+    ax2 = ax1.twinx()  # Zweite Y-Achse erstellen
+    sns.lineplot(data=agg_df, x='Date', y='MarkDown3', ax=ax2, color='orange', label='MarkDown3', alpha=0.6)
+    ax2.set_ylabel('MarkDown3', fontsize=fontsize_axes)
+
+    # Schritt 8: Feiertage markieren
+    for index, row in holidays.iterrows():
+        if row['Date'] >= pd.Timestamp('2011-07-01'):  # Feiertage nur anzeigen, wenn sie nach dem Filterdatum liegen
+            ax1.axvline(x=row['Date'], color='red', linestyle='--', alpha=0.5)
+
+    # Schritt 9: Legende und Layout anpassen
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    plt.tight_layout()
+    st.pyplot(fig6)
+    '''
+
+    # Plot7: Nur MarkDown4 + Feiertage + Weekly_Sales
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic7_MD4.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Schritt 1: DataFrame mit den notwendigen Spalten erstellen
+    df_datetime = pd.DataFrame({
+        'Date': merge_train['Date'],
+        'Weekly_Sales': merge_train['Weekly_Sales'],
+        'MarkDown4': merge_train['MarkDown4'],  # MarkDown4 verwenden
+        'IsHoliday': merge_train['IsHoliday']  
+    })
+
+    # Schritt 2: Feiertage filtern
+    holidays = df_datetime[df_datetime['IsHoliday'] == 1]
+
+    # Schritt 3: Durchschnittliche Weekly_Sales pro Datum berechnen
+    agg_df = df_datetime.groupby('Date').agg({
+        'Weekly_Sales': 'mean',
+        'MarkDown4': 'mean'  # MarkDown4 aggregieren
+    }).reset_index()
+
+    # Schritt 4: DataFrame auf Datumsbereich ab Juli 2011 filtern
+    agg_df = agg_df[agg_df['Date'] >= '2011-07-01']
+
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes = 15
+
+    # Schritt 5: Plot erstellen
+    fig7, ax1 = plt.subplots(figsize=(15, 6))
+
+    # Schritt 6: Durchschnittliche Weekly Sales auf der ersten Y-Achse plotten
+    sns.lineplot(data=agg_df, x='Date', y='Weekly_Sales', ax=ax1, color='blue', label='Average Weekly Sales')
+    ax1.set_title('Average Weekly Sales and MarkDown4 Over Time', fontsize=fontsize_title)
+    ax1.set_xlabel('Date', fontsize=fontsize_axes)
+    ax1.set_ylabel('Average Weekly Sales', fontsize=fontsize_axes)
+    ax1.grid(True)
+
+    # Schritt 7: Nur MarkDown4 auf der zweiten Y-Achse plotten
+    ax2 = ax1.twinx()  # Zweite Y-Achse erstellen
+    sns.lineplot(data=agg_df, x='Date', y='MarkDown4', ax=ax2, color='orange', label='MarkDown4', alpha=0.6)
+    ax2.set_ylabel('MarkDown4', fontsize=fontsize_axes)
+
+    # Schritt 8: Feiertage markieren
+    for index, row in holidays.iterrows():
+        if row['Date'] >= pd.Timestamp('2011-07-01'):  # Feiertage nur anzeigen, wenn sie nach dem Filterdatum liegen
+            ax1.axvline(x=row['Date'], color='red', linestyle='--', alpha=0.5)
+
+    # Schritt 9: Legende und Layout anpassen
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    plt.tight_layout()
+    st.pyplot(fig7)
+    '''
+
+    # Plot8: Nur MarkDown5 + Feiertage + Weekly_Sales
+    image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures_Holiday_MarkDown\Holiday_MarkDown_pic8_MD5.png"
+
+    st.image(image_path,use_column_width=True)
+
+    '''
+    # Schritt 1: DataFrame mit den notwendigen Spalten erstellen
+    df_datetime = pd.DataFrame({
+        'Date': merge_train['Date'],
+        'Weekly_Sales': merge_train['Weekly_Sales'],
+        'MarkDown5': merge_train['MarkDown5'],  # MarkDown5 verwenden
+        'IsHoliday': merge_train['IsHoliday']  
+    })
+
+    # Schritt 2: Feiertage filtern
+    holidays = df_datetime[df_datetime['IsHoliday'] == 1]
+
+    # Schritt 3: Durchschnittliche Weekly_Sales pro Datum berechnen
+    agg_df = df_datetime.groupby('Date').agg({
+        'Weekly_Sales': 'mean',
+        'MarkDown5': 'mean'  # MarkDown5 aggregieren
+    }).reset_index()
+
+    # Schritt 4: DataFrame auf Datumsbereich ab Juli 2011 filtern
+    agg_df = agg_df[agg_df['Date'] >= '2011-07-01']
+
+    # Schriftgrößen
+    fontsize_title = 20
+    fontsize_axes = 15
+
+    # Schritt 5: Plot erstellen
+    fig8, ax1 = plt.subplots(figsize=(15, 6))
+
+    # Schritt 6: Durchschnittliche Weekly Sales auf der ersten Y-Achse plotten
+    sns.lineplot(data=agg_df, x='Date', y='Weekly_Sales', ax=ax1, color='blue', label='Average Weekly Sales')
+    ax1.set_title('Average Weekly Sales and MarkDown5 Over Time', fontsize=fontsize_title)
+    ax1.set_xlabel('Date', fontsize=fontsize_axes)
+    ax1.set_ylabel('Average Weekly Sales', fontsize=fontsize_axes)
+    ax1.grid(True)
+
+    # Schritt 7: Nur MarkDown5 auf der zweiten Y-Achse plotten
+    ax2 = ax1.twinx()  # Zweite Y-Achse erstellen
+    sns.lineplot(data=agg_df, x='Date', y='MarkDown5', ax=ax2, color='orange', label='MarkDown5', alpha=0.6)
+    ax2.set_ylabel('MarkDown5', fontsize=fontsize_axes)
+
+    # Schritt 8: Feiertage markieren
+    for index, row in holidays.iterrows():
+        if row['Date'] >= pd.Timestamp('2011-07-01'):  # Feiertage nur anzeigen, wenn sie nach dem Filterdatum liegen
+            ax1.axvline(x=row['Date'], color='red', linestyle='--', alpha=0.5)
+
+    # Schritt 9: Legende und Layout anpassen
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    plt.tight_layout()
+    st.pyplot(fig8)
+    '''
+  
+
+  
+
+
+
+
 
 
     
-
 #MarkDownanalyse
 def get_markdown():
     # Vordefinierte Farbpaletten

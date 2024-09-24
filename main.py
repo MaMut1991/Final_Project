@@ -2,7 +2,7 @@
 
 import streamlit as st
 
-from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap, get_holiday, get_markdown
+from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap, get_holiday
 from XGBoost import sales_forecast
 from time_series_analysis_2 import get_time_series
 from XGBoost import sales_forecast
@@ -24,23 +24,18 @@ st.sidebar.markdown('# Analyses:', help='In this section, historical data can be
 st.sidebar.markdown('#### Pre-built Analyses:')
 
 # Buttons für Korrelationen
-corr = st.sidebar.button('Correlation Analysis', help='Generates charts that illustrate the correlations between the features.')
+corr = st.sidebar.button('Correlation', help='Generates charts that illustrate the correlations between the features.')
 
 if corr:
     show_corr()
 
 # Feiertagsanalyse
-holiday = st.sidebar.button('Holiday Analysis', help='Displays charts to analyze the holidays in more detail.')
+holiday = st.sidebar.button('Holiday & MarkDown', help='Displays charts to analyze the holidays in more detail.')
 if holiday:
     get_holiday()
 
-# MarkDownanalyse
-markdown = st.sidebar.button('MarkDown Analysis', help='Displays charts to analyze the MarkDowns in more detail.')
-if markdown:
-    get_markdown()
-
 #Buttons für Time Series Analysis
-tsa = st.sidebar.button('Time Series Analysis', help='Generates charts that analyze time-dependent features.')
+tsa = st.sidebar.button('Time Series', help='Generates charts that analyze time-dependent features.')
 if tsa:
     get_time_series()
 

@@ -143,7 +143,7 @@ def sales_forecast():
     merge_train, merge_test = data_preprocessing()
 
     # Splitte Trainingsdaten (train.csv) in train und test 
-    X = merge_train.drop(['Date','Year', 'Month', 'Weekly_Sales', 'Fuel_Price','Temperature','Type','MarkDown1','MarkDown2','MarkDown3','MarkDown4','MarkDown4','MarkDown5','CPI','IsHoliday', 'Unemployment'], axis=1) # Alle Originalfeatures (ohne Weekly_Sales = Target und ohne Zeitkomponenten) 
+    X = merge_train.drop(['Date','Year', 'Month', 'Weekly_Sales', 'Fuel_Price','Temperature','Type','MarkDown1','MarkDown2','MarkDown3','MarkDown4','MarkDown4','MarkDown5','CPI','IsHoliday', 'Unemployment', 'Super_Bowl', 'Labor_Day', 'Thanksgiving', 'Christmas'], axis=1) # Alle Originalfeatures (ohne Weekly_Sales = Target und ohne Zeitkomponenten) 
     y = merge_train['Weekly_Sales']     # Nur Weekly_Sales (Target) 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)     
 
