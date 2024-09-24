@@ -1668,31 +1668,6 @@ def get_holiday():
     st.pyplot(fig8)
     '''
   
-
-  
-
-
-
-
-
-
-    
-#MarkDownanalyse
-def get_markdown():
-    # Vordefinierte Farbpaletten
-    color_palette_1 = ['#FF6C3E']    # 1 Farbe für Diagramm
-    color_palette_2 = ['#FF6C3E','#3ED1FF']    # 2 Farben für Diagramm
-    color_palette_3 = ['#FF6C3E','#3ED1FF','#70FF3E']    # 3 Farben für Diagramm
-    color_palette_4 = ['#FF6C3E','#3ED1FF','#70FF3E','#CD3EFF']    # 4 Farben für Diagramm
-
-    # Funktion aus preprocessing.py importieren
-    merge_train, merge_test = data_preprocessing()
-    pass
-
-
-
-
-
 # Dashboard
 def get_dashboard():
    

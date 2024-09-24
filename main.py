@@ -3,6 +3,7 @@
 import streamlit as st
 
 from dashboard import create_diagram, show_corr, get_dashboard, get_store_department_sales_heatmap, get_type_department_sales_heatmap, get_holiday
+from preprocessing import data_preprocessing
 from XGBoost import sales_forecast
 from time_series_analysis_2 import get_time_series
 from XGBoost import sales_forecast
@@ -12,7 +13,7 @@ st.set_page_config(layout='wide')
 
 
 # Titel
-st.header('SalesEcho © (Prototyp)')
+st.header('SalesWizard (Prototyp)')
 col1 = st.columns(1)
 
 # Sidebar
@@ -71,17 +72,17 @@ x_achse = st.sidebar.selectbox('What should go on the x-axis?',options = options
 y1_achse = st.sidebar.selectbox('What should go on the y-axis?', options=options_y1, placeholder='y-Achse')
 
 # Checkbox-Abfrage für zweite y-Achse
-checkbox_y2_achse = st.sidebar.checkbox('Would you like to add a second y-axis?')
+checkbox_y2_achse = st.sidebar.checkbox('Would you like to add a 2nd y-axis?')
 
 if checkbox_y2_achse:
-    y2_achse = st.sidebar.selectbox('What should go on the second y-axis?', options=options_y2, disabled=checkbox_y2_achse == False)
+    y2_achse = st.sidebar.selectbox('What should go on the 2nd y-axis?', options=options_y2, disabled=checkbox_y2_achse == False)
 else:
     y2_achse = None
 
 # Operation wählen
 option_operation = ['Average', 'Sum']
 
-operation = st.sidebar.selectbox('Display as sum or average?:',options=option_operation, placeholder='Rechenoperation', help='Decide whether the charts should display the average or the sum of the desired data.')
+operation = st.sidebar.selectbox('Display as sum or average?',options=option_operation, placeholder='Rechenoperation', help='Decide whether the charts should display the average or the sum of the desired data.')
 
 # Buttons für Analyseteil
 show_me = st.sidebar.button('Create Diagrams', help='Generates charts based on the selected parameters.')
@@ -101,3 +102,4 @@ st.sidebar.markdown('# Forecast:', help='In this section, Weekly Sales are predi
 pred_rf = st.sidebar.button('Start XGBoost', help='Here, the Weekly_Sales are estimated using the Random Forest model.')
 if pred_rf:
     sales_forecast()
+    
