@@ -102,4 +102,9 @@ st.sidebar.markdown('# Forecast:', help='In this section, Weekly Sales are predi
 pred_rf = st.sidebar.button('Start XGBoost', help='Here, the Weekly_Sales are estimated using the Random Forest model.')
 if pred_rf:
     sales_forecast()
+
+# Cache leeren
+if st.sidebar.button('Clear Cache'):
+    st.cache_data.clear()
+    st.cache_resource.clear()
     

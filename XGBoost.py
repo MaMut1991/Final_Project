@@ -40,6 +40,7 @@ def visualizing_forecasts(y_test_future):
     historical_values_for_diagram = merge_train[['Date', 'Weekly_Sales']]
 
     # Erstellung Liniendiagramm
+   
     sns.set_style('darkgrid')
     fig1, ax1 = plt.subplots(figsize=(15, 6))
 
@@ -55,6 +56,7 @@ def visualizing_forecasts(y_test_future):
     ax1.set_title('Historische vs. Prognostizierte Sales', fontsize=14)
 
     st.pyplot(fig1)
+    
 
     # Erstellung Tabellen
     st.markdown('Sales Forecasts:')
@@ -67,6 +69,7 @@ def visualizing_forecasts(y_test_future):
     daily_forecasts = table1.groupby(['Date', 'Store', 'Dept'])['Weekly_Sales'].mean().round(2)
     
     st.dataframe(daily_forecasts)
+    
 
 # Bewertung der Modellleistung auf dem Trainings- und Testdatensatz
 def evaluate_model(model, X_train, y_train, X_test, y_test):
@@ -89,6 +92,7 @@ def evaluate_model(model, X_train, y_train, X_test, y_test):
 
     return mse_train, rmse_train, mae_train, r2_train, mse_test, rmse_test, mae_test, r2_test
 
+@st.cache_resource
 def sales_forecast():
 
     # Import merge_train und merge_test

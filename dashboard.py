@@ -8,7 +8,7 @@ import streamlit as st
 from preprocessing import data_preprocessing, get_holiday_without_Easter
 
 
-
+@st.cache_resource
 def create_diagram(y1=None, y2=None, x=None, operation=None):
     '''
     Diese Funktion soll Parameter aus der Web-App entgegennehmen und gemäß der Eingabe entsprechende Diagramme zurückgeben.
@@ -243,15 +243,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
 
 
-
-
-
-
-       
-
-
-
-
     # Case3: 1 Achse, var1 ist nicht weekly sales
 
     elif y1 != 'Weekly_Sales' and y2 == None:
@@ -379,9 +370,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
                 st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
 
 
-
-
-
         # Case 3.5: y1 == CPI 
         if y1 == 'CPI' and x == 'Date':
             df_c3_5 = pd.DataFrame({
@@ -434,8 +422,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
         elif y1 == 'CPI' and x != 'Date':
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
-
-
 
 
         # Case 3.6: y1 == Unemployment  
@@ -531,7 +517,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.pyplot(fig)
 
 
-
             # Stemplot erstellen auf Jahresbasis
 
             fig2, ax2 = plt.subplots(figsize=(15,6))
@@ -545,8 +530,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
         elif y1 == 'IsHoliday' and x != 'Date':
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
-
-
 
 
         # Case 3.8: y1 == Size  
@@ -568,8 +551,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
         elif y1 == 'Size' and x != 'Store':
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
         
-
-
 
         # Case 3.9: y1 == Fuel_Price  
         if y1 == 'Fuel_Price' and x == 'Date':
@@ -612,12 +593,8 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             plt.tight_layout()
             st.pyplot(fig1)  # Zeige das erste Diagramm
 
-            
-
         elif y1 == 'Fuel_Price' and x != 'Date':
             st.write("Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!")
-
-
 
 
         # Case 3.10: y1 == MarkDown1
@@ -708,7 +685,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
             
         
-
         # Case 3.11: y1 == MarkDown2
         if y1 == 'MarkDown2' and x == 'Date':
             
@@ -796,9 +772,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
 
 
-
-
-
         # Case 3.12: y1 == MarkDown3
         if y1 == 'MarkDown3' and x == 'Date':
             
@@ -837,7 +810,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             
             # Erstelle Diagramm 2 - MarkDown3 im Jahresverlauf
             
-    
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='MarkDown3', data=MD3_aggregated_c3_12_date, ax=ax2, palette=color_palette_1)
             ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
@@ -885,9 +857,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
         elif y1 == 'MarkDown3' and x != 'Date':
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
-
-
-
 
 
         # Case 3.13: y1 == MarkDown4
@@ -977,9 +946,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
 
 
-
-
-
         # Case 3.14: y1 == MarkDown5
         if y1 == 'MarkDown5' and x == 'Date':
             
@@ -1018,7 +984,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             
             # Erstelle Diagramm 2 - MarkDown5 im Jahresverlauf
             
-           
             fig2, ax2 = plt.subplots(figsize=(15,6))
             sns.lineplot(x='Date', y='MarkDown5', data=MD5_aggregated_c3_14_date, ax=ax2, palette=color_palette_1)
             ax2.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
@@ -1066,9 +1031,6 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
         elif y1 == 'MarkDown5' and x != 'Date':
             st.write('Keine sinnvolle Auswertung möglich. Bitte versuche es mit anderen Parametern!')
-
-
-
 
 
     # Case4: 2 y-Achsen, var1 und var2 sind nicht weekly sales
@@ -1119,7 +1081,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
             # Zeichne Diagramm 2 - Monatliche Übersicht
          
             fig2, ax3 = plt.subplots(figsize=(15,6))
-            sns.lineplot(x='Month', y=y1, data=agg_c4_month, color='blue', ax=ax3, hue='Year', palette=color_palette_3)
+            sns.lineplot(x='Month', y=y1, data=agg_c4_month, ax=ax3, hue='Year', palette=color_palette_3)
             ax3.set_ylabel(y1, fontsize=fontsize_axes)
             ax3.set_xlabel('Months', fontsize=fontsize_axes)
             ax3.set_title('Analysis of the desired parameters', fontsize=fontsize_title)
@@ -1128,7 +1090,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
             # Erstelle zweite y-Achse für das zweite Diagramm
             ax4 = ax3.twinx()
-            sns.lineplot(x='Month', y=y2, data=agg_c4_month, color='red', ax=ax4, hue='Year', palette='Wistia')
+            sns.lineplot(x='Month', y=y2, data=agg_c4_month, ax=ax4, hue='Year', palette='Wistia')
             ax4.set_ylabel(y2, fontsize=fontsize_axes)
             ax4.legend(loc='upper right')
 
@@ -1142,6 +1104,7 @@ def create_diagram(y1=None, y2=None, x=None, operation=None):
 
 
 # Korrelationsanalyse
+@st.cache_resource
 def show_corr():
     merge_train, merge_test = data_preprocessing()
 
@@ -1165,6 +1128,7 @@ def show_corr():
 
 
 # Heatmap Store-Department-Weekly_Sales - Kombinationen
+@st.cache_resource
 def get_store_department_sales_heatmap():
     merge_train, merge_test = data_preprocessing()
 
@@ -1202,6 +1166,7 @@ def get_type_department_sales_heatmap():
 
 
 # Feiertagsanalyse
+@st.cache_resource
 def get_holiday():
 
     # Schriftgrößen
