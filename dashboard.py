@@ -1636,7 +1636,7 @@ def get_holiday():
 # Dashboard
 def get_dashboard():
    
-    st.write("Klicke [hier](https://public.tableau.com/views/DashboardFlughafen-Projekt_neu/Dashboard1?:language=de-DE&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link), um das Dashboard zu öffnen.")
+    st.write("Klicke [hier](https://public.tableau.com/app/profile/over.fit/viz/Dash-GO-NOW-040_this/1a-Data?publish=yes), um das Dashboard zu öffnen.")
 
 
     
