@@ -16,7 +16,7 @@ from statsmodels.tsa.stattools import adfuller
 
 # Datenvorbereitung
 
-
+@st.cache_resource
 def get_time_series():
     store4 = 0
     store6 = 0
@@ -47,9 +47,9 @@ def get_time_series():
     # Als Bild eingefügt, um Rechenzeit in Präsentation zu sparen!
     image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures\Series_Time_Analysis_Pic1_Weekly_Sales_Over_Time_AVG_Liniendiagramm.png"
 
-    st.image(image_path, use_column_width=True)
+    #st.image(image_path, use_column_width=True)
 
-    '''
+    
     weekly_sales_mean = merge_train[['Date', 'Weekly_Sales']].copy()
     weekly_sales_mean['Date'] = pd.to_datetime(weekly_sales_mean['Date'])  # Sicherstellen, dass das Datum im richtigen Format ist
     weekly_sales_mean.set_index('Date', inplace=True)
@@ -62,29 +62,29 @@ def get_time_series():
     ax1.set_ylabel('Sales', fontsize = fontsize_axes)
     ax1.grid(True, linestyle='-')
     st.pyplot(fig1)
-    '''
+    
     
     # Zeitlich abhängige Variablen plotten
     # Als Bild eingefügt, um Rechenzeit in Präsentation zu sparen!
     image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures\Time_Series_Analyse_Pic3_Zeitabhängige Features.png"
 
-    st.image(image_path,use_column_width=True)
+    #st.image(image_path,use_column_width=True)
 
-    '''
+    
     fig3, ax1 = plt.subplots(figsize=(40,20))
     merge_train[['Date', 'Temperature', 'Fuel_Price', 'CPI', 'Unemployment', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5']].plot(x='Date', subplots=True, ax=ax1, color=color_palette_4)
     ax1.set_title('Overview of time-dependent variables', fontsize=70)
     st.markdown("<h2 style='text-align: center;'>Overview of Time-Dependent Variables</h2>", unsafe_allow_html=True)
     st.pyplot(fig3)
-    '''
+    
     
     # Zeitreihenzerlegung Weekly_Sales über alle Stores
     # Als Bild eingefügt, um Rechenzeit in Präsentation zu sparen!
     image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures\Time_Series_Analyse_Pic4_Decomposition_Weekly_Sales.png"
 
-    st.image(image_path, use_column_width=True)
+    #st.image(image_path, use_column_width=True)
 
-    '''
+    
     # Seasonal Decomposition
     stores = merge_train 
     stores.set_index('Date',inplace=True) # Setze Date als Index
@@ -94,16 +94,16 @@ def get_time_series():
     fig4 = decomposition.plot()  # plot ohne 'ax'
     fig4.set_size_inches(15, 6)  # Größe anpassen
     st.pyplot(fig4)
-    '''
+    
 
     
     # Autokorrelationsplot
     # Als Bild eingefügt, um Rechenzeit in Präsentation zu sparen!
     image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures\Time_Series_Analyse_Pic5_Autokorrelationsplot.png"
 
-    st.image(image_path, use_column_width=True)
+    #st.image(image_path, use_column_width=True)
     
-    '''
+    
     # Autokorrelationsplot erstellen - Test auf Saisonalität
     plt.rcParams.update({'figure.figsize': (15, 6), 'figure.dpi': 120})
     # Autokorrelationsplot
@@ -111,18 +111,18 @@ def get_time_series():
     autocorrelation_plot(merge_train['Weekly_Sales'].tolist())
     plt.title("Autokorrelationsplot - Test auf Saisonalität der Weekly_Sales", fontsize=20)  # Titel setzen
     st.pyplot(fig5)
-    '''
+    
   
 
     # ADF-Test durchführen (Test auf Stationarität)
     # Als Bild eingefügt, um Rechenzeit in Präsentation zu sparen!
     image_path=r"C:\Users\mail\OneDrive\Desktop\Privat\Data Science Institut\Abschlussprojekt\Versatile Production System\Daten_Walmart\Github\Final_Project\Final_Project\pictures\Time_Series_Analyse_Pic6_Augmented_Dickey_Fuller.png"
 
-    st.image(image_path, use_column_width=False)
+    #st.image(image_path, use_column_width=False)
 
-    '''
+    
     result = adfuller(merge_train['Weekly_Sales'])
     st.write('Augmented Dickey Fuller (ADF) Statistic:', result[0])
     st.write('p-value:', result[1])
     st.write('(Bei p < 0.05 liegt eine Stationarität vor.)')
-    '''
+    

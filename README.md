@@ -3,13 +3,8 @@
 Sales Forecasting - Increasing Efficiency through Machine Learning
 
 ### Introduction to the fictional story
-Imagine you run a successful retail business. You always want your shelves to be stocked with the right products—neither too much nor too little. However, reality often looks different: one day you have excess inventory that spoils and incurs costs. The next day, your shelves are empty because demand was underestimated, leaving your customers disappointed.
+Please consider the PowerPoint presentation (and notes within presentation!)
 
-Finding the balance is an art—but also a huge challenge. Traditional sales forecasting methods are time-consuming and often inaccurate. The consequences? High storage costs, frustrated customers, and missed revenue opportunities.
-
-But now, imagine you had a solution. An app that works like an experienced sales forecasting expert but is more precise and efficient. This app leverages cutting-edge technologies such as machine learning to analyze your sales data and tell you exactly which products are needed and in what quantities.
-
-This opportunity gave rise to the idea for my final project: to develop a prototype app to analyze historical sales data, visualize it, and forecast future sales. In addition to historical data, external factors such as holidays, weather, the consumer price index, oil prices, promotional activities, and regional unemployment will also be considered.
 
 ### Dataset description
 For the prototype, five CSV files from the Kaggle competition "Walmart Recruiting - Store Sales Forecasting" are available.
@@ -62,18 +57,13 @@ Christmas: December 31, 2010; December 30, 2011; December 28, 2012; December 27,
 
 ### Approach
 
-- Develop a function to create charts or a dashboard for the app.
-- Develop a function that trains models, validates them, selects the best model, tunes hyperparameters if necessary, and generates sales forecasts.
-- Develop a Streamlit app to visualize the charts and forecasts. Parameters can be adjusted and passed to the two functions above to customize the analysis results.
+- Develop a module to create charts for the app.
+- Develop a module that train a XGBoost Model for forecasting.
+- Develop a Streamlit app to visualize the charts and forecast. Parameters can be adjusted and passed to the two functions above to customize the analysis results.
 - 
-Three Python files will be created: main.py, dashboard.py, and model.py.
+Five Python files will be created: main.py, dashboard.py, preprocessing.py, time_series_analysis2.py and XGBoost.py.
 - main.py: This file creates the Streamlit app and controls the function calls of the other files.
-- data.py: This file analyzes the sales data and visualizes it in the form of charts.
-- model.py: In this file, models will be trained, validated, the best model selected, hyperparameters tuned, and sales forecasts generated.
+- dashboard.py: This file analyzes the sales data and visualizes it in the form of charts.
+- XGBoost.py: In this file, a model will be trained and validated and sales forecasts are generated.
 
-List of Supervised Models Used:
-- Random Forest
-- Lasso Regression
-- XGBoost
-  
-The final model evaluation will be based on MSE, MAE, RMSE, and R² (coefficient of determination). These evaluation metrics will not only assess the model's accuracy but also check for overfitting or underfitting. To determine and fine-tune the optimal model, negative MSE (neg_mse) will be used for evaluation.
+The final model evaluation will be based on MSE, MAE, RMSE, and R² (coefficient of determination). These evaluation metrics will not only assess the model's accuracy but also check for overfitting or underfitting. 
