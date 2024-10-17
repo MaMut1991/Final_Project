@@ -1,13 +1,13 @@
 # Final project
 
-Sales Forecasting - Increasing Efficiency through Machine Learning
+Data-driven retail: business intelligence and AI-based predictive sales forecasts
 
 ### Introduction to the fictional story
 Please consider the PowerPoint presentation (and notes within presentation!)
 
 
 ### Dataset description
-For the prototype, five CSV files from the Kaggle competition "Walmart Recruiting - Store Sales Forecasting" are available.
+Five CSV files from the Kaggle competition "Walmart Recruiting - Store Sales Forecasting" are available.
 
 https://www.kaggle.com/competitions/walmart-recruiting-store-sales-forecasting/overview
 
@@ -57,10 +57,10 @@ Christmas: December 31, 2010; December 30, 2011; December 28, 2012; December 27,
 
 ### Approach
 
-- Develop a module to create charts for the app.
+- Develop a module to create individual charts for the app .
 - Develop a module that train a XGBoost Model for forecasting.
 - Develop a Streamlit app to visualize the charts and forecast. Parameters can be adjusted and passed to the two functions above to customize the analysis results.
-- 
+  
 Five Python files will be created: main.py, dashboard.py, preprocessing.py, time_series_analysis2.py and XGBoost.py.
 - main.py: This file creates the Streamlit app and controls the function calls of the other files.
 - dashboard.py: This file analyzes the sales data and visualizes it in the form of charts.
